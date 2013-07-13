@@ -1,0 +1,159 @@
+verb "nimm", "hebe" do
+    no_parameter do |verb|
+        "#{verb.capitalize} was?"
+    end
+
+    parameter object do |verb,obj|
+        obj.take
+    end
+    
+    parameter object, "aus" do |verb,obj|
+        "#{verb.capitalize} #{obj} aus was?"
+    end
+    
+    parameter object, "aus", container do |verb,obj,ctn|
+        ctn.take obj
+    end
+end
+
+verb "zieh" "ziehe" do
+    no_parameter "Zieh was an oder aus oder was?"
+
+    parameter worn, "aus" do |verb,obj|
+        obj.take_off
+    end
+    
+    parameter wearable, "an" do |verb,obj|
+        obj.take_on
+    end
+    
+    parameter "an", object do |verb,obj|
+        obj.pull
+    end
+end
+
+verb "zaehle", "zaehl" do
+    no_parameter "Zaehle was?"
+    
+    parameter object do |verb,obj|
+        obj.count
+    end
+end
+
+verb "oeffne" do
+    no_parameter "Oeffne was?"
+    
+    parameter object do |verb,obj|
+        obj.open
+    end
+end
+
+type :container do
+    initial do
+        @objects.collect do |object|
+            object.initial
+        end
+    end
+
+    actions do
+        def take obj
+            
+        end
+    end
+end
+
+type :openable do
+    actions do
+        @open = false
+    
+        def open
+            attribute :open => true
+        end
+        
+        def open?
+            @open
+        end
+        
+        def close
+            @open = false
+        end
+        
+        def closed?
+            !@open
+        end
+    end
+end
+
+room :flur_1, "Flur" do
+    name "Flur"
+    description "Du befindest dich am Anfang des Flurs."
+    
+    north_to :flur_2
+    west_to :badezimmer
+end
+
+room :flur_2, "Flur" do
+    name "Flur"
+    description "Du befindest dich am Ende des Flurs."
+    
+    north_to :wohnzimmer
+    south_to :flur_1
+    west_to :kueche
+    
+    object :schluesselkasten, "Schluesselkasten" do
+        name "Schluesselkasten", "Kasten"
+        description "Ein hoelzerner Schluesselkasten"
+        initial "An der Wand haengt ein Schluesselkasten"
+        
+        is :container, :openable
+        
+        object :schluesselbund, "Schluesselbund" do
+            name "Schluesselbund", "Schluessel"
+            description "Ein Schluesselbund mit zwei Schluesseln"
+            initial "Im Schluesselkasten befindet sich ein Schluesselbund"
+            
+            actions do
+                def count
+                    "Eins, zwei Schluessel"
+                end
+            end
+        end
+    end
+end
+
+room :badezimmer, "Badezimmer" do
+    name "Bad", "Badezimmer"
+    description "Du befindest dich in einem Badezimmer"
+    
+    east_to :flur_1
+end
+
+room :wohnzimmer, "Wohnzimmer" do
+    name "Wohnzimmer"
+    description "Du befindest dich in einem Wohnzimmer"
+    
+    north_to :balkon
+    east_to :schlafzimmer
+    south_to :flur_2
+end
+
+room :balkon, "Balkon" do
+    name "Balkon"
+    description "Du stehst auf einem Balkon"
+    
+    south_to :wohnzimmer
+end
+
+room :schlafzimmer, "Schlafzimmer" do
+    name "Schlafzimmer"
+    description "Du befindest dich in einem Schlafzimmer"
+    
+    west_to :wohnzimmer
+end
+
+room :kueche, "Kueche" do
+    name "Kueche"
+    description "Du befindest dich in einer Kueche"
+    
+    east_to :flur_2
+end
