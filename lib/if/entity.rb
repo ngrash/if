@@ -1,6 +1,7 @@
 module IF
   class Entity
     attr_reader :id, :name, :objects
+    attr_writer :description
   
     def initialize(id, name, config=nil, &block)
       config ||= {}
@@ -25,10 +26,6 @@ module IF
       @description ||= ""
       @description << "\n" unless @description.strip.empty?
       @description << description
-    end
-    
-    def description=(description)
-      @description = description
     end
     
     def names(*names)
