@@ -9,7 +9,7 @@ module IF
       @name = name
       @names = [name]
       @objects = []
-       
+      
       config[:names].each do |name|
         @names << name unless @names.include? name
       end if config[:names]

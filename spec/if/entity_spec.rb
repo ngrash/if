@@ -13,7 +13,7 @@ end
 
 describe IF::Entity do
   context "when creating" do
-    it "raises ArgumentError with less than 2 parameters" do
+    it "raises ArgumentError with less than 2 arguments" do
       expect {
         IF::Entity.new
       }.to raise_error ArgumentError, /0 for 2/
@@ -46,7 +46,36 @@ describe IF::Entity do
     end
   end
   
-  context "when created using block" do
+  context "when created with config hash" do
+    before do
+      @entity = new_entity :names => ["foo", "bar", "baz"], :description => "fizzbuzz"
+    end
+  
+    it "sets names" do
+      @entity.names.should eq get_names("foo", "bar", "baz")
+    end
+    
+    it "ignores duplicate names" do
+      entity = new_entity :names => ["foo", "foo", "bar"]
+      entity.names.should eq get_names("foo", "bar")
+    end
+    
+    it "sets description" do
+      @entity.description.should eq "fizzbuzz"
+    end
+    
+    it "does not overwrite name" do
+      entity = new_entity :name => "foo"
+      entity.name.should eq ENTITY_NAME
+    end
+    
+    it "does not overwrite id" do
+      entity = new_entity :id => :foo
+      entity.id.should eq ENTITY_ID
+    end
+  end
+  
+  context "when created with block" do
     before do
       @entity = new_entity do
         names "foo", "bar", "baz"
@@ -87,40 +116,17 @@ describe IF::Entity do
     end
   end
   
-  context "when created with config hash" do
-    before do
-      @entity = new_entity :names => ["foo", "bar", "baz"], :description => "fizzbuzz"
-    end
-  
-    it "sets names" do
-      @entity.names.should eq get_names("foo", "bar", "baz")
-    end
-    
-    it "ignores duplicate names" do
-      entity = new_entity :names => ["foo", "foo", "bar"]
-      entity.names.should eq get_names("foo", "bar")
-    end
-    
-    it "sets description" do
-      @entity.description.should eq "fizzbuzz"
-    end
-    
-    it "does not overwrite name" do
-      entity = new_entity :name => "foo"
-      entity.name.should eq ENTITY_NAME
-    end
-    
-    it "does not overwrite id" do
-      entity = new_entity :id => :foo
-      entity.id.should eq ENTITY_ID
-    end
+  it "can set description" do
+    entity = new_entity
+    entity.description = "fizzbuzz"
+    entity.description.should eq "fizzbuzz"
   end
   
   it "handles closure" do
-    description = "fizzbuzz"
-    entity = new_entity do |e|
-      e.description = description
+    e1 = nil
+    e2 = new_entity do |e|
+      e1 = e
     end
-    entity.description.should eq description
+    e1.should eq e2
   end
 end
