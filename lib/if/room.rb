@@ -9,8 +9,8 @@ module IF
       
       @exits = {}
       
-      Direction.each do |direction|
-        exit = Direction.to_exit(direction)
+      Directions.each do |direction|
+        exit = Directions.to_exit(direction)
         @exits[direction] = config[exit] if config[exit]
       end
       
@@ -19,8 +19,10 @@ module IF
       end
     end
     
-    module Direction
+    module Directions
       DIRECTIONS = [:north, :east, :south, :west]
+      
+      extend Enumerable
       
       def self.to_exit(direction)
         "#{direction}_to".to_sym
@@ -33,7 +35,7 @@ module IF
       end
     end
     
-    Direction.each do |direction|
+    Directions.each do |direction|
       define_method "#{direction}_to" do |room_id|
         @exits[direction] = room_id
       end

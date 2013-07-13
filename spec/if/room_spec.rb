@@ -3,14 +3,14 @@ require "spec_helper"
 ROOM_ID = :my_room
 ROOM_NAME = "My Room"
 
-EXITS = { :north => :foo, :east => :bar, :south => :baz, :west => :qux }
+EXITS = Hash[IF::Room::Directions.map {|d| [d, "#{d}_room".to_sym]}]
 
 def new_room(config=nil, &block)
   IF::Room.new(ROOM_ID, ROOM_NAME, config, &block)
 end
 
 def to_exit(direction)
-  IF::Room::Direction.to_exit direction
+  IF::Room::Directions.to_exit direction
 end
 
 describe IF::Room do
