@@ -33,15 +33,15 @@ describe IF::Entity do
       @entity.name.should eq ENTITY_NAME
     end
     
-    its "#names contains only #name" do
+    its "#names" do
       @entity.names.should eq get_names
     end
     
-    its "#description is nil" do
+    its "#description" do
       @entity.description.should be_nil
     end
     
-    its "#objects is empty" do
+    its "#objects" do
       @entity.objects.should be_empty
     end
   end
