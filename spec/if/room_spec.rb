@@ -1,21 +1,24 @@
 require "spec_helper"
 
-ROOM_ID = :my_room
-ROOM_NAME = "My Room"
-
 EXITS = Hash[IF::Room::Directions.map {|d| [d, "#{d}_room".to_sym]}]
 
 def new_room(config=nil, &block)
-  IF::Room.new(ROOM_ID, ROOM_NAME, config, &block)
+  IF::Room.new(ENTITY_ID, ENTITY_NAME, config, &block)
 end
 
 def to_exit(direction)
   IF::Room::Directions.to_exit direction
 end
 
+# for shared entity examples
+alias new_entity new_room
+
 describe IF::Room do
+  
+  it_behaves_like "entity"
+
   context "when creating" do
-    it "raises ArgumentError with less than 2 arguments" do
+    it "requires two arguments" do
       expect {
         IF::Room.new
       }.to raise_error ArgumentError, /0 for 2/

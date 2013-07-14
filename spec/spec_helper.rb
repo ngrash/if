@@ -17,3 +17,4 @@ RSpec.configure do |config|
 end
 
 require "if"
+require "if/entity_shared_examples"

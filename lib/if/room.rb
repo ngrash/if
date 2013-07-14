@@ -14,9 +14,7 @@ module IF
         @exits[direction] = config[exit] if config[exit]
       end
       
-      if block_given?
-        block.arity < 1 ? instance_eval(&block) : block.call(self)
-      end
+      super
     end
     
     module Directions
