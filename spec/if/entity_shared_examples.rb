@@ -13,6 +13,13 @@ shared_examples "entity" do
     entity.description.should eq "fizzbuzz"
   end
   
+  it "can set parent" do
+    parent = new_entity
+    child = new_entity
+    child.parent = parent
+    child.parent.should be parent
+  end
+  
   it "handles closure" do
     e1 = nil
     e2 = new_entity do |e|
@@ -34,6 +41,10 @@ shared_examples "entity" do
       @entity.name.should eq ENTITY_NAME
     end
     
+    its "#parent" do
+      @entity.parent.should be_nil
+    end
+    
     its "#names" do
       @entity.names.should eq get_names
     end
@@ -50,6 +61,12 @@ shared_examples "entity" do
   context "when created with config hash" do
     before do
       @entity = new_entity :names => ["foo", "bar", "baz"], :description => "fizzbuzz"
+    end
+  
+    it "sets parent" do
+      parent = new_entity
+      child = new_entity parent: parent
+      child.parent.should be parent
     end
   
     it "sets names" do
@@ -120,6 +137,16 @@ shared_examples "entity" do
         description "buzz"
       end
       entity.description.should eq "fizz\nbuzz"
+    end
+    
+    it "adding object sets its parent" do
+      entity = new_entity do
+        object "foo", :foo do
+        end
+      end
+      
+      entity.objects.count.should eq 1
+      entity.objects.first.parent.should be entity
     end
     
     it "can add objects" do

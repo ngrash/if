@@ -1,5 +1,6 @@
 module IF
   class Entity
+    attr_accessor :parent
     attr_reader :id, :name, :objects
     attr_writer :description
   
@@ -11,6 +12,7 @@ module IF
       @names = [name]
       @objects = []
       
+      @parent = config[:parent]
       @description = config[:description]
       
       config[:names].each do |name|
@@ -41,7 +43,7 @@ module IF
     end
     
     def object(id, name, &block)
-      @objects << Object.new(id, name, &block)
+      @objects << Object.new(id, name, parent: self, &block)
     end
   end
 end
