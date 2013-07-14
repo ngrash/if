@@ -15,7 +15,7 @@ module IF
         @names << name unless @names.include? name
       end if config[:names]
       @description = config[:description]
-          
+      
       if block_given?
         block.arity < 1 ? instance_eval(&block) : block.call(self)
       end
@@ -24,7 +24,7 @@ module IF
     def description(description=nil)
       return @description unless description
       @description ||= ""
-      @description << "\n" unless @description.strip.empty?
+      @description << "\n" unless @description.empty?
       @description << description
     end
     
