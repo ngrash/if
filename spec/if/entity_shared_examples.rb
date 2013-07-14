@@ -7,6 +7,20 @@ shared_examples "entity" do
     [ENTITY_NAME, *names]
   end
 
+  it "can set description" do
+    entity = new_entity
+    entity.description = "fizzbuzz"
+    entity.description.should eq "fizzbuzz"
+  end
+  
+  it "handles closure" do
+    e1 = nil
+    e2 = new_entity do |e|
+      e1 = e
+    end
+    e1.should be e2
+  end
+  
   context "when created" do
     before do
       @entity = new_entity
@@ -101,19 +115,5 @@ shared_examples "entity" do
       end
       entity.description.should eq "fizz\nbuzz"
     end
-  end
-  
-  it "can set description" do
-    entity = new_entity
-    entity.description = "fizzbuzz"
-    entity.description.should eq "fizzbuzz"
-  end
-  
-  it "handles closure" do
-    e1 = nil
-    e2 = new_entity do |e|
-      e1 = e
-    end
-    e1.should eq e2
   end
 end

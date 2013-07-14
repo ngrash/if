@@ -9,9 +9,7 @@ describe IF::Entity do
 
   context "when creating" do
     it "requires two arguments" do
-      expect {
-        IF::Entity.new
-      }.to raise_error ArgumentError, /0 for 2/
+      expect { IF::Entity.new }.to raise_error ArgumentError, /0 for 2/
     end
   end
 end
