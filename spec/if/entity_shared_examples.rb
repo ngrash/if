@@ -69,6 +69,12 @@ shared_examples "entity" do
       child.parent.should be parent
     end
   
+    it "moves itself to parent" do
+      parent = new_entity
+      child = new_entity parent: parent
+      parent.objects.should include child
+    end
+  
     it "sets names" do
       @entity.names.should eq get_names("foo", "bar", "baz")
     end
@@ -86,6 +92,12 @@ shared_examples "entity" do
       child = new_entity
       parent = new_entity objects: [child]
       parent.objects.should include child
+    end
+    
+    it "sets self as parent for objects" do
+      child = new_entity
+      parent = new_entity objects: [child]
+      parent.objects.first.parent.should be parent
     end
     
     it "does not overwrite name" do
@@ -154,7 +166,41 @@ shared_examples "entity" do
         object "foo", :foo do
         end
       end
+      entity.objects.count.should eq 1
       entity.objects.should include { |obj| obj.id == :foo }
+    end
+  end
+  
+  context "when moving" do
+    before :each do
+      @e1 = new_entity
+      @e2 = new_entity
+      @e3 = new_entity
+      
+      @e1.parent = @e2
+      @e2.objects << @e1
+    end
+  
+    it "removes itself from its former parent" do
+      @e2.objects.should include @e1
+      @e1.move_to @e3
+      @e2.objects.should_not include @e1
+    end
+    
+    it "adds itself to the new parent" do
+      @e1.move_to @e3
+      @e3.objects.should include @e1
+    end
+    
+    it "updates parent" do
+      @e1.move_to @e3
+      @e1.parent.should be @e3
+    end
+    
+    it "can move to nil" do
+      @e1.move_to nil
+      @e1.parent.should be_nil
+      @e2.objects.should be_empty
     end
   end
 end

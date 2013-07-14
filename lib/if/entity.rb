@@ -12,7 +12,8 @@ module IF
       @names = [name]
       @objects = []
       
-      @parent = config[:parent]
+      move_to config[:parent]
+      
       @description = config[:description]
       
       config[:names].each do |name|
@@ -20,7 +21,7 @@ module IF
       end if config[:names]
       
       config[:objects].each do |object|
-        @objects << object unless @objects.include? object
+        object.move_to self
       end if config[:objects]
       
       if block_given?
@@ -43,7 +44,13 @@ module IF
     end
     
     def object(id, name, &block)
-      @objects << Object.new(id, name, parent: self, &block)
+      Object.new(id, name, parent: self, &block)
+    end
+    
+    def move_to(target_entity)
+      @parent.objects.delete self if @parent
+      @parent = target_entity
+      @parent.objects << self if @parent
     end
   end
 end
