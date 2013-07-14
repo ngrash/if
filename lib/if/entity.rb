@@ -1,7 +1,7 @@
 module IF
   class Entity
     attr_accessor :parent
-    attr_reader :id, :name, :objects
+    attr_reader :id, :name
     attr_writer :description
   
     def initialize(id, name, config=nil, &block)
@@ -41,6 +41,17 @@ module IF
       names.each do |name|
         @names << name unless @names.include? name
       end
+    end
+    
+    def objects(recursive=false)
+      return @objects unless recursive
+      
+      objects = []
+      @objects.each do |child|
+        objects << child
+        objects += child.objects(true)
+      end
+      objects
     end
     
     def object(id, name, &block)

@@ -28,6 +28,26 @@ shared_examples "entity" do
     e1.should be e2
   end
   
+  it "can get child objects recursively" do
+    entity = new_entity do
+      object :foo, "foo" do
+        object :bar, "bar"
+        object :baz, "baz" do
+          object :qux, "qux"
+        end
+      end
+    end
+    
+    entity.objects.count.should eq 1
+    entity.objects.first.objects.count.should eq 2
+    
+    all_child_objects = entity.objects true
+    all_child_objects.count.should eq 4
+    
+    ids = all_child_objects.collect { |obj| obj.id }
+    ids.should eq [:foo, :bar, :baz, :qux]
+  end
+  
   context "when created" do
     before do
       @entity = new_entity
