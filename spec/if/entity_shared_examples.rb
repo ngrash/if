@@ -65,6 +65,12 @@ shared_examples "entity" do
       @entity.description.should eq "fizzbuzz"
     end
     
+    it "sets objects" do
+      child = new_entity
+      parent = new_entity objects: [child]
+      parent.objects.should include child
+    end
+    
     it "does not overwrite name" do
       entity = new_entity :name => "foo"
       entity.name.should eq ENTITY_NAME
@@ -114,6 +120,14 @@ shared_examples "entity" do
         description "buzz"
       end
       entity.description.should eq "fizz\nbuzz"
+    end
+    
+    it "can add objects" do
+      entity = new_entity do
+        object "foo", :foo do
+        end
+      end
+      entity.objects.should include { |obj| obj.id == :foo }
     end
   end
 end
