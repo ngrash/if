@@ -35,7 +35,11 @@ describe IF::Story do
       story.rooms.should eq rooms
     end
     
-    it "sets verbs"
+    it "sets verbs" do
+      verbs = [IF::Verb.new("foo")]
+      story = new_story verbs: verbs
+      story.verbs.should eq verbs
+    end
   end
   
   context "when created with block" do
@@ -50,6 +54,15 @@ describe IF::Story do
       story.rooms[1].id.should eq :bar
     end
     
-    it "adds verb"
+    it "adds verb" do
+      story = new_story do
+        verb "foo"
+        verb "bar"
+      end
+      
+      story.verbs.count.should eq 2
+      story.verbs[0].names.should eq ["foo"]
+      story.verbs[1].names.should eq ["bar"]
+    end
   end
 end
