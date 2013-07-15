@@ -1,19 +1,19 @@
 module IF
   class Entity
     attr_accessor :parent
-    attr_reader :id, :name
-    attr_writer :description
+    attr_reader :id
+    attr_writer :description, :initial
   
     def initialize(id, name, config=nil, &block)
       config ||= {}
     
       @id = id
-      @name = name
       @names = [name]
       @objects = []
       
       move_to config[:parent]
       
+      @initial = config[:initial]
       @description = config[:description]
       
       config[:names].each do |name|
@@ -29,11 +29,22 @@ module IF
       end
     end
     
+    def initial(initial=nil)
+      return @initial unless initial
+      @initial ||= ""
+      @initial << "\n" unless @initial.empty?
+      @initial << initial
+    end
+    
     def description(description=nil)
       return @description unless description
       @description ||= ""
       @description << "\n" unless @description.empty?
       @description << description
+    end
+    
+    def name
+      @names.first
     end
     
     def names(*names)

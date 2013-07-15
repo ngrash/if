@@ -6,6 +6,12 @@ shared_examples "entity" do
   def get_names(*names)
     [ENTITY_NAME, *names]
   end
+  
+  it "can set initial" do
+    object = new_entity
+    object.initial = "foo"
+    object.initial.should eq "foo"
+  end
 
   it "can set description" do
     entity = new_entity
@@ -76,6 +82,10 @@ shared_examples "entity" do
     its "#objects" do
       @entity.objects.should be_empty
     end
+    
+    its "#initial" do
+      @entity.initial.should be_nil
+    end
   end
   
   context "when created with config hash" do
@@ -102,6 +112,11 @@ shared_examples "entity" do
     it "ignores duplicate names" do
       entity = new_entity :names => ["foo", "foo", "bar"]
       entity.names.should eq get_names("foo", "bar")
+    end
+    
+    it "sets initial" do
+      entity = new_entity initial: "fizzbuzz"
+      entity.initial.should eq "fizzbuzz"
     end
     
     it "sets description" do
@@ -161,6 +176,14 @@ shared_examples "entity" do
         names "foo"
       end
       entity.names.should eq get_names("foo", "bar")
+    end
+    
+    it "adds initial with newline" do
+      entity = new_entity do
+        initial "fizz"
+        initial "buzz"
+      end
+      entity.initial.should eq "fizz\nbuzz"
     end
     
     it "adds descriptions with newline" do
