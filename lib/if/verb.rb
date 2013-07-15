@@ -11,11 +11,19 @@ module IF
     end
     
     def with(*args, &block)
+      fail unless block
+      fail if args.empty?
+      
       @patterns ||= {}
       @patterns[args] = block
     end
     
-    def get_matcher(config)
+    def alone(&block)
+      @patterns ||= {}
+      @patterns[[]] = block
+    end
+    
+    def get_matcher(config={})
       Matcher.new config, self
     end
     
@@ -30,8 +38,14 @@ module IF
             re << " "
             if part == :object
               re << "(#{config[:objects].map{|o|o.names.join("|")}.join("|")})"
+            elsif part == :room
+              re << "(#{config[:rooms].map{|r|r.names.join("|")}.join("|")})"
             elsif part.is_a? String
               re << part
+            elsif part.is_a? Symbol
+              re << "(#{config[:objects].find_all{|o| o.is? part}.map{|o|o.names.join("|")}.join("|")})"
+            else
+              fail
             end
           end          
           @expressions[Regexp.new(re)] = block
@@ -50,7 +64,7 @@ module IF
       end
       
       def lookup_object(name)
-        @config[:objects].find { |object| object.names.include? name }
+        (@config[:objects] || [] + @config[:rooms] || []).find { |object| object.names.include? name }
       end
     
       class Match

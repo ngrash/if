@@ -1,16 +1,9 @@
 require "spec_helper"
 
-VERB_NAME = "do"
-
-def new_verb(*names, &block)
-  names << [VERB_NAME] if names.empty?
-  IF::Verb.new(*names, &block)
-end
-
 describe IF::Verb do
   it "handles closure" do
     v1 = nil
-    v2 = new_verb do |v|
+    v2 = IF::Verb.new do |v|
       v1 = v
     end
     v1.should be v2
@@ -64,6 +57,101 @@ describe IF::Verb do
     match.proc.should be
     match.proc.arity.should eq 2
     match.args.should eq [object1, object2]
+  end
+  
+  it "can match rooms" do
+    verb = IF::Verb.new "go" do
+      with "to", :room do |room|
+      end
+    end
+    
+    room = IF::Room.new :place, "place"
+    
+    matcher = verb.get_matcher rooms: [room]
+    match = matcher.match "go to place"
+    match.should be
+    match.verb.should eq "go"
+    match.proc.should be
+    match.proc.arity.should eq 1
+    match.args.should eq [room]
+  end
+  
+  it "can match any type" do
+    verb = IF::Verb.new "open" do
+      with :container do |container|
+      end
+    end
+    
+    box = IF::Object.new :box, "box" do
+      is :container
+    end
+    
+    matcher = verb.get_matcher objects: [box]
+    match = matcher.match "open box"
+    match.should be
+    match.verb.should eq "open"
+    match.proc.should be
+    match.proc.arity.should eq 1
+    match.args.should eq [box]
+  end
+  
+  it "only matches objects of specified type" do
+    verb = IF::Verb.new "open" do
+      with :container do |container|
+      end
+    end
+    
+    box = IF::Object.new :box, "box" do
+      is :container
+    end
+    
+    chest = IF::Object.new :chest, "chest" do
+      is :container
+    end
+    
+    spoon = IF::Object.new :spoon, "spoon"
+    
+    matcher = verb.get_matcher objects: [box, chest, spoon]
+    
+    match1 = matcher.match "open box"
+    match1.should be
+    match1.verb.should eq "open"
+    match1.proc.should be
+    match1.proc.arity.should eq 1
+    match1.args.should eq [box]
+    
+    match2 = matcher.match "open chest"
+    match2.should be
+    match2.verb.should eq "open"
+    match2.proc.should be
+    match2.proc.arity.should eq 1
+    match2.args.should eq [chest]
+    
+    match3 = matcher.match "open spoon"
+    match3.should be_nil
+  end
+
+  it "requires a block for #with" do
+    verb = IF::Verb.new "foo"
+    expect { verb.with :object }.to raise_error
+  end
+  
+  it "requires one argument for #with" do
+    verb = IF::Verb.new "foo"
+    expect { verb.with {} }.to raise_error
+  end
+  
+  it "matches alone" do
+    proc = lambda {}
+    verb = IF::Verb.new "foo"
+    verb.alone &proc
+    
+    matcher = verb.get_matcher
+    match = matcher.match "foo"
+    match.should be
+    match.verb.should eq "foo"
+    match.proc.should be proc
+    match.args.should be_empty
   end
   
   it "matches all entity names" do
@@ -125,7 +213,7 @@ describe IF::Verb do
     object = IF::Object.new :obj, "baz"
     
     matcher = verb.get_matcher objects: [object]
-    
+ 
     match = matcher.match "foo bar"
     match.should be_nil
   end

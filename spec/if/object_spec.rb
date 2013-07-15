@@ -10,11 +10,11 @@ describe IF::Object do
 
   it_behaves_like "entity"
 
-  #it "can query types" do
-  #  object = new_object types: [:foo, :bar]
-  #  object.is?(:foo).should be_true
-  #  object.is?(:bar).should be_true
-  #end
+  it "can query types" do
+    object = new_object types: [:foo, :bar]
+    object.is?(:foo).should be_true
+    object.is?(:bar).should be_true
+  end
   
   context "when creating" do
     it "requires two arguments" do
@@ -23,26 +23,18 @@ describe IF::Object do
   end
   
   context "when created" do
-    #its "#types" do
-    #  new_object.types.should be_empty
-    #end
-    
     its "#actions" do
       new_object.actions.should be
     end
   end
   
   context "when created with config hash" do
-    #it "sets types" do
-    #  types = [:foo, :bar]
-    #  object = new_object types: types
-    #  object.types.should eq types
-    #end
-    
-    #it "ignores duplicate types" do
-    #  object = new_object types: [:foo, :foo, :bar]
-    #  object.types.should eq [:foo, :bar]
-    #end
+    it "sets types" do
+      types = [:foo, :bar]
+      object = new_object types: types
+      object.is?(:foo).should be_true
+      object.is?(:bar).should be_true
+    end
     
     it "defines actions" do
       object = new_object actions: lambda { |_| def action; end }
@@ -51,29 +43,23 @@ describe IF::Object do
   end
   
   context "when created with block" do
-    #it "can set types" do
-    #  object = new_object do
-    #    is :foo, :bar
-    #  end
-    #  object.types.should eq [:foo, :bar]
-    #end
+    it "can set types" do
+      object = new_object do
+        is :foo, :bar
+      end
+      object.is?(:foo).should be_true
+      object.is?(:bar).should be_true
+    end
   
-    #it "adds types" do
-    #  object = new_object do
-    #    is :foo, :bar
-    #    is :baz
-    #  end
-    #  object.types.should eq [:foo, :bar, :baz]
-    #end
-    
-    #it "ignores duplicate types" do
-    #  object = new_object do
-    #    is :foo, :bar
-    #    is :bar
-    #    is :baz, :baz
-    #  end
-    #  object.types.should eq [:foo, :bar, :baz]
-    #end
+    it "adds types" do
+      object = new_object do
+        is :foo, :bar
+        is :baz
+      end
+      object.is?(:foo).should be_true
+      object.is?(:bar).should be_true
+      object.is?(:baz).should be_true
+    end
     
     it "defines actions" do
       object = new_object do
