@@ -29,10 +29,6 @@ describe IF::Verb do
     end
   end
   
-  context "when created with block" do
-    
-  end
-  
   it "can match object" do
     verb = IF::Verb.new "take" do
       with :object do |obj|
