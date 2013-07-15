@@ -21,6 +21,13 @@ module IF
       end
     end
     
+    def self.load(story_file)
+      story_definition = File.read(story_file)
+      story = IF::Story.new
+      story.instance_eval(story_definition, story_file)
+      story
+    end
+    
     def room(id, name, &block)
       @rooms << Room.new(id, name, &block)
     end
