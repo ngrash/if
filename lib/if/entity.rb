@@ -16,9 +16,7 @@ module IF
       @initial = config[:initial]
       @description = config[:description]
       
-      config[:names].each do |name|
-        @names << name unless @names.include? name
-      end if config[:names]
+      names *config[:names] if config[:names]
       
       config[:objects].each do |object|
         object.move_to self
