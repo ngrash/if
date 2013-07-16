@@ -1,40 +1,80 @@
+require "if"
+
 module IF
   class Context
-    attr_accessor :_this, :_objects, :_player, :_rooms
-  
-    def initialize(config={})
-      @_this = config[:this]
-      @_objects = config[:objects]
-      @_player = config[:player]
-      @_rooms = config[:rooms]
+    attr_accessor :_story, :_entity
+    
+    def initialize(entity)
+      @_entity = entity
     end
-  
-    def object(id)
-      object = @_objects.find { |object| object.id == id }
-      object.context
+    
+    def _get_entity(id_or_context)
+      context = _get_context(id_or_context)
+      context._entity if context
+    end
+    
+    def _get_context(id_or_context)
+      return id_or_context unless id_or_context.is_a?(Symbol)
+      id = id_or_context
+      object(id) || room(id)
+    end
+    
+    def parent
+      @_entity.parent.context
     end
     
     def player
-      @_player.context
+      @_story.player.context
     end
     
-    def room(room=nil)
-      @_player.parent if room.nil?
+    def object(id)
+      object = @_story.get_object(id)
+      object.context if object
     end
     
     def description
-      @_this.description
+      @_entity.description
     end
     
     def name
-      @_this.name
+      @_entity.name
     end
     
-    def move_to(object)
-      unless object.is_a? Symbol
-        object = object(object)
+    def id
+      @_entity.id
+    end
+    
+    def move_to(id_or_context)
+      entity = _get_entity id_or_context
+      @_entity.move_to(entity)
+    end
+    
+    def contains?(id_or_context)
+      object = _get_entity id_or_context
+      @_entity.objects.include?(object)
+    end
+    
+    def in?(id_or_context)
+      entity = _get_entity id_or_context
+      entity.objects.include?(@_entity)
+    end
+    
+    def within?(id_or_context)
+      entity = _get_entity id_or_context
+      entity.objects(true).include?(@_entity)
+    end
+    
+    def room(id=nil)
+      if id.nil?
+        parent = @_entity
+        until
+          parent = parent.parent
+        end until parent.is_a? IF::Room
+        parent.context if parent
+      else
+        room = @_story.get_room(id)
+        room.context if room
       end
-      @_this.move_to(object)
     end
     
     def write(text)

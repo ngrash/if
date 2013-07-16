@@ -13,29 +13,75 @@ describe IF::Story do
     s1.should be s2
   end
 
-  it "validates id uniqueness" do
+  it "validates room id uniqueness" do
     expect do
-      story = new_story do
+      new_story do
         room :room, "Room 1"
         room :room, "Room 2"
       end
     end.to raise_error
   end
   
-  it "injects self in all contexts" do
+  it "validates object id uniqueness" do
+    expect do
+      new_story do
+        room :room, "Room" do
+          object :obj, "Object 1"
+          object :obj, "Object 2"
+        end
+      end
+    end.to raise_error
+  end
+  
+  it "validates object id uniqueness accross rooms" do
+    expect do
+      new_story do
+        room :room1, "Room 1" do
+          object :obj, "Object 1"
+        end
+        room :room2, "Room 2" do
+          object :obj, "Object 2"
+        end
+      end
+    end.to raise_error
+  end
+  
+  it "validates object and room id uniqueness" do
+    expect do
+      new_story do
+        room :entity, "Room 1" do
+          object :entity, "Object 1"
+        end
+      end
+    end.to raise_error
+  end
+  
+  it "injects self in all object contexts" do
     story = new_story do
       room :room1, "Room 1" do
         object :obj1, "Object 1" do
           object :obj1_1, "Object 1.1"
         end
       end
+    end
+
+    story.get_object(:obj1).context._story.should be story
+    story.get_object(:obj1_1).context._story.should be story
+  end
+  
+  it "injects self in all room contexts" do
+    story = new_story do
+      room :room1, "Room 1"
       room :room2, "Room 2"
     end
     
-    story.room(:room1).context._story.should be story
-    story.object(:obj1).context._story.should be story
-    story.object(:obj1_1).context._story.should be story
-    story.room(:room2).context._story.should be story
+    story.get_room(:room1).context._story.should be story
+    story.get_room(:room2).context._story.should be story
+  end
+  
+  it "returns nil when object not found" do
+    story = new_story
+    story.get_object(:foo).should be_nil
   end
   
   it "can get object by id" do
@@ -48,6 +94,11 @@ describe IF::Story do
     obj = story.get_object(:obj1) 
     obj.id.should eq :obj1
     obj.name.should eq "Obj1"
+  end
+  
+  it "returns nil when room not found" do
+    story = new_story
+    story.get_room(:foo).should be_nil
   end
   
   it "can get room by id" do

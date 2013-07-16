@@ -1,7 +1,7 @@
 module IF
   class Entity
     attr_accessor :parent
-    attr_reader :id
+    attr_reader :id, :context
     attr_writer :description, :initial
   
     def initialize(id, name, config=nil, &block)
@@ -10,6 +10,7 @@ module IF
       @id = id
       @names = [name]
       @objects = []
+      @context = IF::Context.new(self)
       
       move_to config[:parent]
       

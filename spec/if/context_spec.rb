@@ -40,6 +40,16 @@ describe IF::Context do
     carpet.room.should be hall
   end
   
+  it "returns nil when room not found" do
+    key = object_context :key
+    key.room(:foobar).should be_nil
+  end
+  
+  it "returns nil when object not fount" do
+    key = object_context :key
+    key.object(:foobar).should be_nil
+  end
+  
   it "can get parent context" do
     money = object_context :money
     safe = object_context :safe
@@ -66,6 +76,11 @@ describe IF::Context do
     key = object_context :key
     
     picture.object(:key).should be key
+  end
+  
+  it "can get id" do
+    key = object_context :key
+    key.id.should eq :key
   end
   
   it "can get description" do
@@ -151,20 +166,21 @@ describe IF::Context do
   
   it "can check for parent room by context recursively (within?)" do
     money = object_context :money
-    room = room_context :hall
+    hall = room_context :hall
     
     money.within?(hall).should be_true
   end
   
   it "can write" do
-    @context.should_receive(:puts).once do |text|
+    context = object_context :money
+    context.should_receive(:puts).once do |text|
       text.should eq "fizzbuzz"
     end
-    @context.write "fizzbuzz"
+    context.write "fizzbuzz"
   end
   
   it "can set #_story" do
-    context = IF::Context.new
+    context = IF::Context.new(IF::Object.new(:foo, "Foo"))
     story = IF::Story.new
     context._story = story
     context._story.should be story
