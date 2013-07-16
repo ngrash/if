@@ -93,7 +93,12 @@ room :flur_2, "Flur" do
       
       actions do
         def count
-          "Eins, zwei Schluessel"
+          write "Eins, zwei Schluessel"
+        end
+        
+        def take
+          write "Der Schluesselbund klimpert als du ihn aufhebst und in deine Tasche steckst."
+          move_to
         end
       end
     end

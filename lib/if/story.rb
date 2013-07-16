@@ -28,6 +28,10 @@ module IF
       story
     end
     
+    def objects
+      @rooms.collect { |r| r.objects(true) }.flatten
+    end
+    
     def room(id, name, &block)
       @rooms << Room.new(id, name, &block)
     end

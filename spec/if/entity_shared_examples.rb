@@ -86,6 +86,10 @@ shared_examples "entity" do
     its "#initial" do
       @entity.initial.should be_nil
     end
+    
+    its "#context" do
+      @entity.context.should be
+    end
   end
   
   context "when created with config hash" do
