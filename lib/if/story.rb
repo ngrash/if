@@ -27,9 +27,9 @@ module IF
     end
     
     def self.load(story_file, config={})
-      story_definition = File.read(story_file)
-      story = IF::Story.new
-      story.instance_eval(story_definition, story_file)
+      story_definition = File.read story_file
+      story = IF::Story.new config
+      story.instance_eval story_definition, story_file
       story
     end
     
