@@ -18,6 +18,7 @@ describe IF::Context do
         object :carpet, "Carpet"
         object :picture, "Picture" do
           object :safe, "Safe" do
+            is :container
             object :money, "Money"
           end
         end
@@ -31,6 +32,11 @@ describe IF::Context do
   
   def room_context(id)
     @story.get_room(id).context
+  end
+  
+  it "can query type" do
+    carpet = object_context :safe
+    carpet.is?(:container).should be_true
   end
 
   it "can get room context" do

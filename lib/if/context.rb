@@ -54,6 +54,10 @@ module IF
       @_entity.objects.include?(object)
     end
     
+    def is?(type)
+      @_entity.is? type
+    end
+    
     def in?(id_or_context)
       entity = _get_entity id_or_context
       entity.objects.include?(@_entity)

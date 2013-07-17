@@ -6,17 +6,28 @@ module IF
       config ||= {}
       
       @types = []
-      @actions = ActionsContext.new
+      
+      super
       
       is *config[:types] if config[:types]
       actions &config[:actions] if config[:actions]
-      
-      super
     end
     
     def actions(&block)
       return @actions unless block
-      @actions.instance_eval &block
+      @context.instance_eval &block
+    end
+    
+    def action(name, &block)
+      id = nil
+      if name.is_a? Symbol
+        id = name
+      else
+        id = name.gsub(/\s+/, "_").to_sym
+      end
+      
+      meta = class << @context; self; end
+      meta.send(:define_method, id, &block)
     end
     
     def is(*type_ids)
@@ -27,10 +38,6 @@ module IF
     
     def is?(type_id)
       @types.include? type_id
-    end
-    
-    class ActionsContext
-      
     end
   end
 end

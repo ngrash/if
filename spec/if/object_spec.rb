@@ -22,12 +22,6 @@ describe IF::Object do
     end
   end
   
-  context "when created" do
-    its "#actions" do
-      new_object.actions.should be
-    end
-  end
-  
   context "when created with config hash" do
     it "sets types" do
       types = [:foo, :bar]
@@ -38,7 +32,7 @@ describe IF::Object do
     
     it "defines actions" do
       object = new_object actions: lambda { |_| def action; end }
-      object.actions.should respond_to :action
+      object.context.should respond_to :action
     end
   end
   
@@ -67,7 +61,31 @@ describe IF::Object do
           def action; end
         end
       end
-      object.actions.should respond_to :action
+      object.context.should respond_to :action
+    end
+    
+    it "defines actions by string" do
+      object = new_object do
+        action "take" do |obj|; end
+      end
+      object.context.should respond_to "take"
+      object.context.method("take").arity.should eq 1
+    end
+    
+    it "defines actions by symbol" do
+      object = new_object do
+        action :take do |obj|; end
+      end
+      object.context.should respond_to :take
+      object.context.method(:take).arity.should eq 1
+    end
+    
+    it "replaces spaces by underscore when defining actions by string" do
+      object = new_object do
+        action "remove from" do; end
+      end
+      object.context.should respond_to :remove_from
+      object.context.method(:remove_from).arity.should eq 0
     end
   end
 end
