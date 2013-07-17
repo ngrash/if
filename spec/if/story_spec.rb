@@ -169,6 +169,35 @@ describe IF::Story do
     end
   end
   
+  context "when loaded from file" do
+    STORY_FILE = "example_story.if"
+    
+    before do
+      fail if File.exist? STORY_FILE
+      File.open STORY_FILE, "w" do |file|
+        file.write 'room :room, "Room"'
+      end
+    end
+    
+    after do
+      File.delete STORY_FILE
+    end
+  
+    it "can load from file" do
+      story = IF::Story.load STORY_FILE
+      story.rooms.count.should eq 1
+      story.rooms.first.name.should eq "Room"
+    end
+  
+    it "can set output" do
+      output = StringIO.new
+      story = IF::Story.load STORY_FILE, output: output
+      story.write "fizzbuzz"
+      output.rewind
+      output.read.should eq "fizzbuzz\n"
+    end
+  end
+  
   context "when created with block" do
     it "adds rooms" do
       story = new_story do
