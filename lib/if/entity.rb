@@ -2,7 +2,7 @@ module IF
   class Entity
     attr_accessor :parent
     attr_reader :id, :context
-    attr_writer :description, :initial
+    attr_writer :description
   
     def initialize(id, name, config=nil, &block)
       config ||= {}
@@ -14,7 +14,6 @@ module IF
       
       move_to config[:parent]
       
-      @initial = config[:initial]
       @description = config[:description]
       
       names *config[:names] if config[:names]
@@ -26,13 +25,6 @@ module IF
       if block_given?
         block.arity < 1 ? instance_eval(&block) : block.call(self)
       end
-    end
-    
-    def initial(initial=nil)
-      return @initial unless initial
-      @initial ||= ""
-      @initial << "\n" unless @initial.empty?
-      @initial << initial
     end
     
     def description(description=nil)
