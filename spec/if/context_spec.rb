@@ -34,6 +34,15 @@ describe IF::Context do
     @story.get_room(id).context
   end
   
+  it "writes through story" do
+    @story.should_receive(:write).once do |text|
+      text.should eq "foo"
+    end
+    
+    safe = object_context :safe
+    safe.write "foo"
+  end
+  
   it "can query type" do
     carpet = object_context :safe
     carpet.is?(:container).should be_true
@@ -175,14 +184,6 @@ describe IF::Context do
     hall = room_context :hall
     
     money.within?(hall).should be_true
-  end
-  
-  it "can write" do
-    context = object_context :money
-    context.should_receive(:puts).once do |text|
-      text.should eq "fizzbuzz"
-    end
-    context.write "fizzbuzz"
   end
   
   it "can set #_story" do

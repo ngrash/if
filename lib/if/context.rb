@@ -82,7 +82,7 @@ module IF
     end
     
     def write(text)
-      puts text
+      @_story.write text
     end
   end
 end
