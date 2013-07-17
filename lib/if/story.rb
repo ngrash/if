@@ -4,12 +4,14 @@ module IF
   
     def initialize(config=nil, &block)
       config ||= {}
-    
+
       @objects = {}
       @rooms = {}
 
       @verbs = []
       @player = IF::Object.new :player, "Player"
+      
+      @output = config[:output] || STDOUT
       
       config[:rooms].each do |room|
         add_room room
@@ -24,7 +26,7 @@ module IF
       end
     end
     
-    def self.load(story_file)
+    def self.load(story_file, config={})
       story_definition = File.read(story_file)
       story = IF::Story.new
       story.instance_eval(story_definition, story_file)
@@ -66,6 +68,10 @@ module IF
     
     def verb(*names, &block)
       @verbs << Verb.new(*names, &block)
+    end
+    
+    def write(text)
+      @output.puts text
     end
   end
 end

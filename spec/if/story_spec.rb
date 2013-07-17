@@ -159,6 +159,14 @@ describe IF::Story do
       story = new_story verbs: verbs
       story.verbs.should eq verbs
     end
+    
+    it "sets output" do
+      output = StringIO.new
+      story = new_story(output: output)
+      story.write "fizzbuzz"
+      output.rewind
+      output.read.should eq "fizzbuzz\n"
+    end
   end
   
   context "when created with block" do
