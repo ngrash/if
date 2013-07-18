@@ -9,6 +9,21 @@ describe IF::EntityContext do
     new_story
   end
   
+  describe "#children" do
+    it "returns all objects" do
+      picture = object_context :picture
+      picture.children.count.should eq 1
+      picture.children.should eq [object_context(:safe)]
+    end
+  end
+  
+  describe "#objects" do
+    it "returns empty array" do
+      picture = object_context :picture
+      picture.objects.should be_empty
+    end
+  end
+  
   it "can get id" do
     key = object_context :key
     key.id.should eq :key

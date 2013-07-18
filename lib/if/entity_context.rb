@@ -22,9 +22,12 @@ module IF
       []
     end
     
+    def children
+      @_entity.objects.map { |o| @_story.get_context(o) }
+    end
+    
     def contains?(id_or_context)
-      object = _get_entity id_or_context
-      @_entity.objects.include?(object)
+      children.include? _get_context(id_or_context)
     end
   end
 end

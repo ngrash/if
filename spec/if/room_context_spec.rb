@@ -51,7 +51,7 @@ describe IF::RoomContext do
           object :obj1_2, "Object 1.2"
           actions do
             def objects
-              @_entity.objects.map { |o| @_story.get_context(o) }
+              children
             end
           end
         end
