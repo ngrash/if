@@ -145,9 +145,18 @@ describe IF::Story do
     its "#player" do
       new_story.player.should be
     end
+    its "#info" do
+      new_story.info.should be
+    end
   end
   
   context "when created with config hash" do
+    it "sets info" do
+      info = IF::StoryInfo.new name: "foo"
+      story = new_story info: info
+      story.info.name.should eq "foo"
+    end
+  
     it "sets rooms" do
       rooms = [IF::Room.new(:foo, "foo")]
       story = new_story rooms: rooms
@@ -199,6 +208,15 @@ describe IF::Story do
   end
   
   context "when created with block" do
+    it "sets info" do
+      story = new_story do
+        story do
+          name "foo"
+        end
+      end
+      story.info.name.should eq "foo"
+    end
+  
     it "adds rooms" do
       story = new_story do
         room :foo, "foo"

@@ -1,3 +1,9 @@
+story do
+  name "Cyriaksring 21"
+  author "Nico Grashoff"
+  start :flur_1
+end
+
 verb "nimm" do
   alone do
     write "Nimm was?"
@@ -29,6 +35,18 @@ verb "oeffne" do
   
   with :object do |object|
     object.open
+  end
+end
+
+verb "schaue" do
+  alone do
+    write player.room.description
+  end
+end
+
+verb "hallo" do
+  alone do
+    write "Hallo zurueck"
   end
 end
 
@@ -98,7 +116,7 @@ room :flur_2, "Flur" do
         
         def take
           write "Der Schluesselbund klimpert als du ihn aufhebst und in deine Tasche steckst."
-          move_to
+          move_to player
         end
       end
     end

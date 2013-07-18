@@ -7,5 +7,5 @@ require "if"
 
 story_file, = ARGV
 
-repl = IF::REPL::new story_file
+repl = IF::REPL::new file: story_file
 repl.run

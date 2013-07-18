@@ -1,6 +1,6 @@
 module IF
   class Story
-    attr_reader :verbs, :player
+    attr_reader :verbs, :player, :info
   
     def initialize(config=nil, &block)
       config ||= {}
@@ -12,6 +12,7 @@ module IF
       @player = IF::Object.new :player, "Player"
       
       @output = config[:output] || STDOUT
+      @info = config[:info] || StoryInfo.new
       
       config[:rooms].each do |room|
         add_room room
@@ -60,6 +61,10 @@ module IF
     
     def objects
       @objects.values
+    end
+    
+    def story(&block)
+      @info = StoryInfo.new(&block)
     end
     
     def room(id, name, &block)

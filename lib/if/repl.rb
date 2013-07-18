@@ -22,6 +22,7 @@ module IF
     end
     
     def step
+      print "> "
       input = @input.gets.chop
       
       matchers = @story.verbs.map do |v|
@@ -32,12 +33,15 @@ module IF
         m.match input
       end
       
-      match = matcher.match input
+      if matcher
+        match = matcher.match input
       
-      context = IF::Context.new(nil)
-      context._story = @story
-       
-      context.instance_exec(*match.args, &match.proc)
+        context = IF::Context.new(nil)
+        context._story = @story
+        context.instance_exec(*match.args, &match.proc)
+      else
+        @story.write "What do you mean?"
+      end
     end
   end
 end
