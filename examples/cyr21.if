@@ -4,6 +4,46 @@ story do
   start :flur_1
 end
 
+verb "norden" do
+  alone do
+    if player.room.north
+      player.move_to player.room.north
+    else
+      write "Es geht nicht nach Norden"
+    end
+  end
+end
+
+verb "osten" do
+  alone do
+    if player.room.east
+      player.move_to player.room.east
+    else
+      write "Es geht nicht nach Osten"
+    end
+  end
+end
+
+verb "sueden" do
+  alone do
+    if player.room.south
+      player.move_to player.room.south
+    else
+      write "Es geht nicht nach Sueden"
+    end
+  end
+end
+
+verb "westen" do
+  alone do
+    if player.room.west
+      player.move_to player.room.west
+    else
+      write "Es geht nicht nach Westen"
+    end
+  end
+end
+
 verb "nimm" do
   alone do
     write "Nimm was?"
