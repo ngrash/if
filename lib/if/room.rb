@@ -45,6 +45,12 @@ module IF
       def objects
         @_entity.objects.inject([]){ |l,o| l << o.context; l << o.context.objects }.flatten
       end
+      
+      Directions.each do |direction|
+        define_method "#{direction}" do
+          @_entity.exits[direction]
+        end
+      end
     end
   end
 end

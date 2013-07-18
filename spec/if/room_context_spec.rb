@@ -11,6 +11,27 @@ describe IF::Room::Context do
   
     expect { hall.move_to }.to raise_error NoMethodError
   end
+
+  it "can get exits room" do
+    @story = IF::Story.new do
+      room :center_room, "Center" do
+        north_to :north_room
+        east_to :east_room
+        south_to :south_room
+        west_to :west_room
+      end
+      room :north_room, "North"
+      room :east_room, "East"
+      room :south_room, "South"
+      room :west_room, "West"
+    end
+   
+    center = @story.get_room(:center_room).context
+    center.north.should eq :north_room
+    center.east.should eq :east_room
+    center.south.should eq :south_room
+    center.west.should eq :west_room
+  end
   
   it "gets child objects" do
     new_story
