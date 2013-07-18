@@ -14,8 +14,6 @@ module IF
         @exits[direction] = config[exit] if config[exit]
       end
       
-      config = config.merge(context: Context.new(self))
-      
       super
     end
     
@@ -38,18 +36,6 @@ module IF
     Directions.each do |direction|
       define_method "#{direction}_to" do |room_id|
         @exits[direction] = room_id
-      end
-    end
-    
-    class Context < Entity::Context
-      def objects
-        @_entity.objects.inject([]){ |l,o| l << o.context; l << o.context.objects }.flatten
-      end
-      
-      Directions.each do |direction|
-        define_method "#{direction}" do
-          @_entity.exits[direction]
-        end
       end
     end
   end

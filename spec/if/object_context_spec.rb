@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe IF::Object::Context do
+describe IF::ObjectContext do
   it_behaves_like "context"
   
   include ContextHelper
@@ -89,7 +89,6 @@ describe IF::Object::Context do
   
   it "can check for parent room by id recursively (within?)" do
     money = object_context :money
-    
     money.within?(:hall).should be_true
   end
   

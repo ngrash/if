@@ -2,13 +2,13 @@ module ContextHelper
   def object_context(id)
     object = @story.get_object(id)
     fail "No such object: '#{id}'" unless object
-    object.context
+    @story.get_context(object)
   end
 
   def room_context(id)
     room = @story.get_room(id)
     fail "No such room: '#{id}'" unless room
-    room.context
+    @story.get_context(room)
   end
   
   def new_story
@@ -44,10 +44,9 @@ shared_examples "context" do
     @story = new_story
   end
   
-  it "can set #_story" do
-    context = IF::Context.new(IF::Object.new(:foo, "Foo"))
+  it "sets story" do
     story = IF::Story.new
-    context._story = story
+    context = IF::Context.new(story, IF::Object.new(:foo, "Foo"))
     context._story.should be story
   end
   
@@ -79,7 +78,7 @@ shared_examples "context" do
   
   it "can get player context" do
     key = object_context :key
-    player = @story.player.context
+    player = @story.get_context(@story.player)
     
     key.player.should be player
   end

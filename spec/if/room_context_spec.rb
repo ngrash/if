@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe IF::Room::Context do
+describe IF::RoomContext do
   it_behaves_like "context"
   
   include ContextHelper
@@ -26,7 +26,7 @@ describe IF::Room::Context do
       room :west_room, "West"
     end
    
-    center = @story.get_room(:center_room).context
+    center = @story.get_context(:center_room)
     center.north.should eq :north_room
     center.east.should eq :east_room
     center.south.should eq :south_room
@@ -51,7 +51,7 @@ describe IF::Room::Context do
           object :obj1_2, "Object 1.2"
           actions do
             def objects
-              @_entity.objects.map { |o| o.context }
+              @_entity.objects.map { |o| @_story.get_context(o) }
             end
           end
         end

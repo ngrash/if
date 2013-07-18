@@ -76,10 +76,6 @@ shared_examples "entity" do
     its "#objects" do
       @entity.objects.should be_empty
     end
-    
-    its "#context" do
-      @entity.context.should be
-    end
   end
   
   context "when created with config hash" do

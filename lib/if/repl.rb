@@ -36,8 +36,7 @@ module IF
       if matcher
         match = matcher.match input
       
-        context = IF::Context.new(nil)
-        context._story = @story
+        context = IF::Context.new(@story, nil)
         context.instance_exec(*match.args, &match.proc)
       else
         @story.write "What do you mean?"

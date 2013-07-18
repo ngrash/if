@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe IF::Entity::Context do
+describe IF::EntityContext do
   it_behaves_like "context"
   
   include ContextHelper

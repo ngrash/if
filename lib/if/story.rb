@@ -1,33 +1,31 @@
+require "set"
+
 module IF
   class Story
-    attr_reader :verbs, :player, :info
+    attr_reader :player, :info
   
     def initialize(config=nil, &block)
       config ||= {}
 
       @objects = {}
       @rooms = {}
-
-      @verbs = []
+      @contexts = {}
+      @verbs = Set.new
       
       @player = IF::Object.new :player, "Player"
-      @player.context._story = self
       
       @info = config[:info] || StoryInfo.new
-      
       @output = config[:output] || STDOUT
-      
-      config[:rooms].each do |room|
-        add_room room
-      end if config[:rooms]
-      
-      config[:verbs].each do |verb|
-        @verbs << verb unless @verbs.include? verb
-      end if config[:verbs]
+      add_rooms config[:rooms] if config[:rooms]
+      @verbs += config[:verbs] if config[:verbs]
       
       if block
         block.arity < 1 ? instance_eval(&block) : block.call(self)
       end
+    end
+    
+    def verbs
+      @verbs.to_a
     end
     
     def self.load(story_file, config={})
@@ -45,21 +43,42 @@ module IF
       @rooms[id]
     end
     
+    def get_entity(id)
+      get_room(id) || get_object(id)
+    end
+    
+    def get_context(id_or_entity)
+      entity = id_or_entity.is_a?(Symbol) ? get_entity(id_or_entity) : id_or_entity
+      @contexts[entity.id] ||= case entity
+                               when IF::Room; IF::RoomContext.new(self, entity)
+                               when IF::Object
+                                context = IF::ObjectContext.new(self, entity)
+                                context.instance_eval &entity.actions if entity.actions
+                                context
+                              else; IF::Context.new(self, entity)
+                              end
+    end
+    
+    def add_rooms(rooms)
+      rooms.each { |r| add_room r }
+    end
+    
     def add_room(room)
-      fail if @rooms[room.id] || @objects[room.id]
+      validate_uniqueness(room.id)
       @rooms[room.id] = room
+      
+      room.objects(true).each do |o|
+        validate_uniqueness(o.id)
+        @objects[o.id] = o
+      end
       
       if room.id == @info.start
         @player.move_to room
       end
-      
-      room.context._story = self 
-      room.objects(true).each do |o|
-        o.context._story = self
-        
-        fail if @objects[o.id] || @rooms[o.id]
-        @objects[o.id] = o
-      end
+    end
+    
+    def validate_uniqueness(id)
+      fail if get_entity(id)
     end
     
     def rooms

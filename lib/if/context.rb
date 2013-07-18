@@ -2,10 +2,10 @@ require "if"
 
 module IF
   class Context
-    attr_accessor :_story, :_entity
-    
-    def initialize(entity)
-      @_entity = entity
+    attr_reader :_story, :_entity
+  
+    def initialize(story, entity)
+      @_story, @_entity = story, entity
     end
     
     def _get_entity(id_or_context)
@@ -20,17 +20,17 @@ module IF
     end
     
     def player
-      @_story.player.context
+      @_story.get_context(@_story.player)
     end
     
     def object(id)
       object = @_story.get_object(id)
-      object.context if object
+      @_story.get_context(object) if object
     end
     
     def room(id)
       room = @_story.get_room(id)
-      room.context if room
+      @_story.get_context(room) if room
     end
     
     def write(text)

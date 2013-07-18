@@ -12,6 +12,21 @@ describe IF::Story do
     end
     s1.should be s2
   end
+  
+  it "injects actions in context" do
+    story = new_story do
+      room :room, "Room" do
+        object :obj, "Object" do
+          actions do
+            def foo; end
+          end
+        end
+      end
+    end
+    
+    context = story.get_context(:obj)
+    context.should respond_to :foo
+  end
 
   it "validates room id uniqueness" do
     expect do
@@ -56,11 +71,6 @@ describe IF::Story do
     end.to raise_error
   end
   
-  it "injects self in player context" do
-    story = new_story
-    story.player.context._story.should be story
-  end
-  
   it "places player in start room" do
     story = new_story do
       story do
@@ -70,31 +80,13 @@ describe IF::Story do
       room :foo, "Foo"
     end
     
-    story.player.parent.should be story.get_room(:foo)
-    story.player.context.room.should be story.get_room(:foo).context
-  end
-  
-  it "injects self in all object contexts" do
-    story = new_story do
-      room :room1, "Room 1" do
-        object :obj1, "Object 1" do
-          object :obj1_1, "Object 1.1"
-        end
-      end
-    end
-
-    story.get_object(:obj1).context._story.should be story
-    story.get_object(:obj1_1).context._story.should be story
-  end
-  
-  it "injects self in all room contexts" do
-    story = new_story do
-      room :room1, "Room 1"
-      room :room2, "Room 2"
-    end
+    room = story.get_room(:foo)
+    player = story.player
+    player.parent.should be room
     
-    story.get_room(:room1).context._story.should be story
-    story.get_room(:room2).context._story.should be story
+    player_context = story.get_context(player)
+    room_context = story.get_context(room)
+    player_context.room.should be room_context
   end
   
   it "returns nil when object not found" do
@@ -145,6 +137,26 @@ describe IF::Story do
     objects = story.objects
     objects.should be
     objects.map { |o| o.id }.should eq [:obj1, :obj2, :obj2_1, :obj3]
+  end
+  
+  it "can get context by entity" do
+    story = new_story do
+      room :foo, "Foo"
+    end
+    room = story.get_room(:foo)
+    context = story.get_context(room)
+    context.should be
+    context._entity.should be room
+  end
+  
+  it "can get context by id" do
+    story = new_story do
+      room :foo, "Foo"
+    end
+    room = story.get_room(:foo)
+    context = story.get_context(:foo)
+    context.should be
+    context._entity.should be room
   end
   
   context "when creating" do
