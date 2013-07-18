@@ -18,5 +18,6 @@ end
 
 require "if"
 require "if/entity_shared_examples"
+require "if/context_shared_examples"
 
 require "stringio"

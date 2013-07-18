@@ -15,7 +15,7 @@ end
 describe IF::Room do
   
   it_behaves_like "entity"
-
+  
   context "when creating" do
     it "requires two arguments" do
       expect { IF::Room.new }.to raise_error ArgumentError, /0 for 2/

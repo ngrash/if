@@ -19,10 +19,6 @@ module IF
       object(id) || room(id)
     end
     
-    def parent
-      @_entity.parent.context
-    end
-    
     def player
       @_story.player.context
     end
@@ -32,53 +28,9 @@ module IF
       object.context if object
     end
     
-    def description
-      @_entity.description
-    end
-    
-    def name
-      @_entity.name
-    end
-    
-    def id
-      @_entity.id
-    end
-    
-    def move_to(id_or_context)
-      entity = _get_entity id_or_context
-      @_entity.move_to(entity)
-    end
-    
-    def contains?(id_or_context)
-      object = _get_entity id_or_context
-      @_entity.objects.include?(object)
-    end
-    
-    def is?(type)
-      @_entity.is? type
-    end
-    
-    def in?(id_or_context)
-      entity = _get_entity id_or_context
-      entity.objects.include?(@_entity)
-    end
-    
-    def within?(id_or_context)
-      entity = _get_entity id_or_context
-      entity.objects(true).include?(@_entity)
-    end
-    
-    def room(id=nil)
-      if id.nil?
-        parent = @_entity
-        until
-          parent = parent.parent
-        end until parent.is_a? IF::Room
-        parent.context if parent
-      else
-        room = @_story.get_room(id)
-        room.context if room
-      end
+    def room(id)
+      room = @_story.get_room(id)
+      room.context if room
     end
     
     def write(text)

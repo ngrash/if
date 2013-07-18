@@ -10,7 +10,7 @@ module IF
       @id = id
       @names = [name]
       @objects = []
-      @context = IF::Context.new(self)
+      @context = config[:context] || Context.new(self)
       
       move_to config[:parent]
       
@@ -64,6 +64,29 @@ module IF
       @parent.objects.delete self if @parent
       @parent = target_entity
       @parent.objects << self if @parent
+    end
+    
+    class Context < IF::Context
+      def id
+        @_entity.id
+      end
+      
+      def name
+        @_entity.name
+      end
+      
+      def description
+        @_entity.description
+      end
+      
+      def objects
+        []
+      end
+      
+      def contains?(id_or_context)
+        object = _get_entity id_or_context
+        @_entity.objects.include?(object)
+      end
     end
   end
 end

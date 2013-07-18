@@ -88,4 +88,37 @@ describe IF::Object do
       object.context.method(:remove_from).arity.should eq 0
     end
   end
+  
+  context "when moving" do
+    before :each do
+      @e1 = new_object
+      @e2 = new_object
+      @e3 = new_object
+      
+      @e1.parent = @e2
+      @e2.objects << @e1
+    end
+  
+    it "removes itself from its former parent" do
+      @e2.objects.should include @e1
+      @e1.move_to @e3
+      @e2.objects.should_not include @e1
+    end
+    
+    it "adds itself to the new parent" do
+      @e1.move_to @e3
+      @e3.objects.should include @e1
+    end
+    
+    it "updates parent" do
+      @e1.move_to @e3
+      @e1.parent.should be @e3
+    end
+    
+    it "can move to nil" do
+      @e1.move_to nil
+      @e1.parent.should be_nil
+      @e2.objects.should be_empty
+    end
+  end
 end
