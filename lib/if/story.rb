@@ -9,10 +9,13 @@ module IF
       @rooms = {}
 
       @verbs = []
+      
       @player = IF::Object.new :player, "Player"
+      @player.context._story = self
+      
+      @info = config[:info] || StoryInfo.new
       
       @output = config[:output] || STDOUT
-      @info = config[:info] || StoryInfo.new
       
       config[:rooms].each do |room|
         add_room room
@@ -45,6 +48,10 @@ module IF
     def add_room(room)
       fail if @rooms[room.id] || @objects[room.id]
       @rooms[room.id] = room
+      
+      if room.id == @info.start
+        @player.move_to room
+      end
       
       room.context._story = self 
       room.objects(true).each do |o|

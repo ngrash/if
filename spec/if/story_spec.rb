@@ -56,6 +56,24 @@ describe IF::Story do
     end.to raise_error
   end
   
+  it "injects self in player context" do
+    story = new_story
+    story.player.context._story.should be story
+  end
+  
+  it "places player in start room" do
+    story = new_story do
+      story do
+        start :foo
+      end
+      
+      room :foo, "Foo"
+    end
+    
+    story.player.parent.should be story.get_room(:foo)
+    story.player.context.room.should be story.get_room(:foo).context
+  end
+  
   it "injects self in all object contexts" do
     story = new_story do
       room :room1, "Room 1" do
