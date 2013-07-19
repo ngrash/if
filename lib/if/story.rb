@@ -7,6 +7,7 @@ module IF
     def initialize(config=nil, &block)
       config ||= {}
 
+      @types = {}
       @objects = {}
       @rooms = {}
       @contexts = {}
@@ -16,6 +17,7 @@ module IF
       
       @info = config[:info] || StoryInfo.new
       @output = config[:output] || STDOUT
+      add_types config[:types] if config[:types]
       add_rooms config[:rooms] if config[:rooms]
       @verbs += config[:verbs] if config[:verbs]
       
@@ -28,11 +30,19 @@ module IF
       @verbs.to_a
     end
     
+    def types
+      @types.values
+    end
+    
     def self.load(story_file, config={})
       story_definition = File.read story_file
       story = IF::Story.new config
       story.instance_eval story_definition, story_file
       story
+    end
+    
+    def get_type(id)
+      @types[id]
     end
     
     def get_object(id)
@@ -53,10 +63,24 @@ module IF
                                when IF::Room; IF::RoomContext.new(self, entity)
                                when IF::Object
                                 context = IF::ObjectContext.new(self, entity)
+                                entity.types.each do |t|
+                                  if type = get_type(t)
+                                    context.instance_eval &type.actions
+                                  end
+                                end
                                 context.instance_eval &entity.actions if entity.actions
                                 context
                               else; IF::Context.new(self, entity)
                               end
+    end
+    
+    def add_types(types)
+      types.each { |t| add_type t }
+    end
+    
+    def add_type(type)
+      validate_uniqueness(type.id)
+      @types[type.id] = type
     end
     
     def add_rooms(rooms)
@@ -78,7 +102,7 @@ module IF
     end
     
     def validate_uniqueness(id)
-      fail if get_entity(id)
+      fail if get_entity(id) || get_type(id)
     end
     
     def rooms
@@ -91,6 +115,10 @@ module IF
     
     def story(&block)
       @info = StoryInfo.new(&block)
+    end
+    
+    def type(id, &block)
+      add_type Type.new(id, &block)
     end
     
     def room(id, name, &block)

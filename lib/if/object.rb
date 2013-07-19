@@ -2,6 +2,8 @@ require "if/entity"
 
 module IF
   class Object < Entity
+    attr_reader :types
+  
     def initialize(id, name, config=nil, &block)
       config ||= {}
       

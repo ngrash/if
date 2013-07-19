@@ -13,21 +13,95 @@ describe IF::Story do
     s1.should be s2
   end
   
-  it "injects actions in context" do
-    story = new_story do
-      room :room, "Room" do
-        object :obj, "Object" do
+  context "when creating context" do
+    it "sets type actions" do
+      story = new_story do
+        type :type do
           actions do
             def foo; end
           end
         end
+        room :room, "Room" do
+          object :obj, "Object" do
+            is :type
+          end
+        end
       end
+      
+      context = story.get_context(:obj)
+      context.should respond_to :foo
     end
     
-    context = story.get_context(:obj)
-    context.should respond_to :foo
+    it "sets object actions" do
+      story = new_story do
+        room :room, "Room" do
+          object :obj, "Object" do
+            actions do
+              def foo; end
+            end
+          end
+        end
+      end
+      
+      context = story.get_context(:obj)
+      context.should respond_to :foo    
+    end
+    
+    it "lets object actions overwrite type actions" do
+      story = new_story do
+        type :type do
+          actions do
+            def foo
+              :foo_from_type
+            end
+          end
+        end
+        room :room, "Room" do
+          object :obj, "Object" do
+            actions do
+              def foo
+                :foo_from_obj
+              end
+            end
+          end
+        end
+      end
+      
+      context = story.get_context(:obj)
+      context.should respond_to :foo
+      context.foo.should eq :foo_from_obj
+    end
   end
-
+  
+  it "validates type uniqueness" do
+    expect do
+      new_story do
+        type :foo
+        type :foo
+      end
+    end.to raise_error
+  end
+  
+  it "validates type and object uniqueness" do
+    expect do
+      new_story do
+        type :foo
+        room :bar, "Bar" do
+          object :foo, "Foo"
+        end
+      end
+    end.to raise_error
+  end
+  
+  it "validates type and room unqueness" do
+    expect do
+      new_story do
+        type :foo
+        room :foo, "Foo"
+      end
+    end.to raise_error
+  end
+  
   it "validates room id uniqueness" do
     expect do
       new_story do
@@ -187,6 +261,12 @@ describe IF::Story do
       story.info.name.should eq "foo"
     end
   
+    it "sets types" do
+      types = [IF::Type.new(:foo)]
+      story = new_story types: types
+      story.types.should eq types
+    end
+  
     it "sets rooms" do
       rooms = [IF::Room.new(:foo, "foo")]
       story = new_story rooms: rooms
@@ -245,6 +325,17 @@ describe IF::Story do
         end
       end
       story.info.name.should eq "foo"
+    end
+    
+    it "adds types" do
+      story = new_story do
+        type :foo
+        type :bar
+      end
+      
+      story.types.count.should eq 2
+      story.types[0].id.should eq :foo
+      story.types[1].id.should eq :bar
     end
   
     it "adds rooms" do
