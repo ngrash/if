@@ -36,5 +36,9 @@ module IF
     def write(text)
       @_story.write text
     end
+    
+    def inspect
+      "#<#{self.class} :#{@_entity.id}>"
+    end
   end
 end

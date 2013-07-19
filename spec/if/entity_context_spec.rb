@@ -11,9 +11,9 @@ describe IF::EntityContext do
   
   describe "#children" do
     it "returns all objects" do
-      picture = object_context :picture
-      picture.children.count.should eq 1
-      picture.children.should eq [object_context(:safe)]
+      envelope = object_context :envelope
+      envelope.children.count.should eq 2
+      envelope.children.should eq [object_context(:letter), object_context(:key)]
     end
   end
   
@@ -21,6 +21,37 @@ describe IF::EntityContext do
     it "returns empty array" do
       picture = object_context :picture
       picture.objects.should be_empty
+    end
+  end
+  
+  describe "#child_objects" do
+    before do
+      @story = IF::Story.new do
+        room :room, "Rooms" do
+          object :foo, "Foo" do
+            object :bar, "Bar"
+            object :baz, "Baz" do
+              object :fizz, "Fizz"
+              object :buzz, "Buzz"
+              
+              actions do
+                def objects
+                  children
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+    
+    it "returns all objects and their visible objects" do
+      foo = object_context :foo
+      foo.child_objects.count.should eq 4
+      foo.child_objects[0].should eq object_context :bar
+      foo.child_objects[1].should eq object_context :baz
+      foo.child_objects[2].should eq object_context :fizz
+      foo.child_objects[3].should eq object_context :buzz
     end
   end
   

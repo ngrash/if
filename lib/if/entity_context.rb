@@ -26,6 +26,14 @@ module IF
       @_entity.objects.map { |o| @_story.get_context(o) }
     end
     
+    def child_objects
+      children.inject([]) do |list, child|
+        list << child
+        list << child.objects
+        list.flatten
+      end
+    end
+    
     def contains?(id_or_context)
       children.include? _get_context(id_or_context)
     end

@@ -28,7 +28,7 @@ module ContextHelper
         object :carpet, "Carpet"
         object :picture, "Picture" do
           object :safe, "Safe" do
-            is :container
+            is :locked
             object :money, "Money"
           end
         end

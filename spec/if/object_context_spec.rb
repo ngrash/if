@@ -11,7 +11,7 @@ describe IF::ObjectContext do
   
   it "can query type" do
     carpet = object_context :safe
-    carpet.is?(:container).should be_true
+    carpet.is?(:locked).should be_true
   end
   
   it "can get room context" do
