@@ -213,6 +213,15 @@ describe IF::Story do
     objects.map { |o| o.id }.should eq [:obj1, :obj2, :obj2_1, :obj3]
   end
   
+  it "can contain objects" do
+    story = new_story do
+      object :foo, "Foo"
+      object :bar, "Bar"
+    end
+    
+    story.objects.map { |o| o.id }.should eq [:foo, :bar]
+  end
+  
   it "can get context by entity" do
     story = new_story do
       room :foo, "Foo"

@@ -91,14 +91,16 @@ module IF
       validate_uniqueness(room.id)
       @rooms[room.id] = room
       
-      room.objects(true).each do |o|
-        validate_uniqueness(o.id)
-        @objects[o.id] = o
-      end
+      room.objects(true).each { |o| add_object o }
       
       if room.id == @info.start
         @player.move_to room
       end
+    end
+    
+    def add_object(object)
+      validate_uniqueness(object.id)
+      @objects[object.id] = object
     end
     
     def validate_uniqueness(id)
@@ -127,6 +129,10 @@ module IF
     
     def verb(*names, &block)
       @verbs << Verb.new(*names, &block)
+    end
+    
+    def object(id, name, &block)
+      add_object Object.new(id, name, &block)
     end
     
     def write(text)
