@@ -76,6 +76,10 @@ shared_examples "entity" do
     its "#objects" do
       @entity.objects.should be_empty
     end
+    
+    its "#initial" do
+      @entity.initial.should be_nil
+    end
   end
   
   context "when created with config hash" do
@@ -87,6 +91,11 @@ shared_examples "entity" do
       parent = new_entity
       child = new_entity parent: parent
       child.parent.should be parent
+    end
+    
+    it "sets initial" do
+      entity = new_entity initial: "fizzbuzz"
+      entity.initial.should eq "fizzbuzz"
     end
   
     it "moves itself to parent" do
@@ -137,6 +146,13 @@ shared_examples "entity" do
         names "foo", "bar", "baz"
         description "fizzbuzz"
       end
+    end
+    
+    it "sets initial" do
+      entity = new_entity do
+        initial "fizzbuzz"
+      end
+      entity.initial.should eq "fizzbuzz"
     end
   
     it "sets names" do
