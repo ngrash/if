@@ -210,7 +210,13 @@ describe IF::Story do
 
     objects = story.objects
     objects.should be
-    objects.map { |o| o.id }.should eq [:obj1, :obj2, :obj2_1, :obj3]
+    objects.map { |o| o.id }.should eq [story.player.id, :obj1, :obj2, :obj2_1, :obj3]
+  end
+  
+  it "can get player context" do
+    story = new_story
+    player_context = story.get_context :player
+    player_context.should be
   end
   
   it "can contain objects" do
@@ -219,7 +225,7 @@ describe IF::Story do
       object :bar, "Bar"
     end
     
-    story.objects.map { |o| o.id }.should eq [:foo, :bar]
+    story.objects.map { |o| o.id }.should eq [story.player.id, :foo, :bar]
   end
   
   it "can get context by entity" do

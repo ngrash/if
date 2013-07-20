@@ -22,6 +22,29 @@ module IF
     end
     
     def step
+      player_context = @story.get_context(@story.player)
+      
+      if player_context && player_context.room
+        @story.write player_context.room.description
+        
+        case @story.player.parent.initial
+        when String
+          @story.write @story.player.parent.initial
+        when Proc
+          player_context.room.instance_eval &@story.player.parent.initial
+        end
+        
+        player_context.room.objects.each do |object_context|
+          object = @story.get_object(object_context.id)
+          case object.initial
+          when String
+            @story.write object.initial
+          when Proc
+            object_context.instance_eval &object.initial
+          end
+        end
+      end
+      
       print "> "
       input = @input.gets.chop
       

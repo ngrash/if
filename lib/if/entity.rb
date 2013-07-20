@@ -45,9 +45,9 @@ module IF
       end
     end
     
-    def initial(initial=nil)
-      return @initial unless initial
-      @initial = initial
+    def initial(initial=nil, &block)
+      return @initial unless initial || block
+      @initial = initial || block
     end
     
     def objects(recursive=false)

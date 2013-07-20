@@ -8,11 +8,7 @@ module IF
     end
   
     def objects
-      @_entity.objects.inject([]) do |all, object| 
-        object_context = @_story.get_context object
-        all << object_context
-        all << object_context.objects
-      end.flatten
+      child_objects
     end
     
     Room::Directions.each do |direction|

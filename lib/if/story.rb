@@ -14,6 +14,7 @@ module IF
       @verbs = Set.new
       
       @player = IF::Object.new :player, "Player"
+      add_object @player
       
       @info = config[:info] || StoryInfo.new
       @output = config[:output] || STDOUT

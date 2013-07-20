@@ -140,14 +140,14 @@ room :flur_2, "Flur" do
   object :schluesselkasten, "Schluesselkasten" do
     names "Kasten"
     description "Ein hoelzerner Schluesselkasten"
-    #initial "An der Wand haengt ein Schluesselkasten"
+    initial "An der Wand haengt ein Schluesselkasten"
     
     is :container, :openable
     
     object :schluesselbund, "Schluesselbund" do
       names "Schluessel"
       description "Ein Schluesselbund mit zwei Schluesseln"
-      #initial "Im Schluesselkasten befindet sich ein Schluesselbund"
+      initial "Im Schluesselkasten befindet sich ein Schluesselbund"
       
       actions do
         def count

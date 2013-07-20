@@ -14,6 +14,7 @@ module IF
       if id
         super
       else
+        return nil if @_entity.parent.nil?
         parent = @_entity
         until
           parent = parent.parent

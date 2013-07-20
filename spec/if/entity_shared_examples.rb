@@ -93,9 +93,14 @@ shared_examples "entity" do
       child.parent.should be parent
     end
     
-    it "sets initial" do
+    it "sets initial text" do
       entity = new_entity initial: "fizzbuzz"
       entity.initial.should eq "fizzbuzz"
+    end
+    
+    it "sets initial block" do
+      entity = new_entity initial: lambda {}
+      entity.initial.class.should be Proc
     end
   
     it "moves itself to parent" do
@@ -148,11 +153,19 @@ shared_examples "entity" do
       end
     end
     
-    it "sets initial" do
+    it "sets initial text" do
       entity = new_entity do
         initial "fizzbuzz"
       end
       entity.initial.should eq "fizzbuzz"
+    end
+    
+    it "sets initial block" do
+      entity = new_entity do
+        initial do
+        end
+      end
+      entity.initial.class.should be Proc
     end
   
     it "sets names" do

@@ -14,6 +14,15 @@ describe IF::ObjectContext do
     carpet.is?(:locked).should be_true
   end
   
+  describe "#room" do
+    it "return nil if parent is nil" do
+      carpet = object_context :carpet
+      carpet._entity.move_to nil
+      carpet._entity.parent.should be nil
+      carpet.room.should be nil
+    end
+  end
+  
   it "can get room context" do
     carpet = object_context :carpet
     hall = room_context :hall
