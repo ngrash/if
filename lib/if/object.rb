@@ -9,10 +9,17 @@ module IF
       
       @types = []
       
+      @initial = config[:initial]
+      
       super
       
       is *config[:types] if config[:types]
       actions &config[:actions] if config[:actions]
+    end
+    
+    def initial(text=nil, &block)
+      return @initial unless text || block
+      @initial = text || block
     end
     
     def actions(&block)

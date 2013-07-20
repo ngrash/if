@@ -22,7 +22,23 @@ describe IF::Object do
     end
   end
   
+  context "when created" do
+    its "#initial" do
+      new_object.initial.should be_nil
+    end
+  end
+  
   context "when created with config hash" do
+    it "sets initial text" do
+      object = new_object initial: "fizzbuzz"
+      object.initial.should eq "fizzbuzz"
+    end
+    
+    it "sets initial block" do
+      object = new_object initial: lambda {}
+      object.initial.class.should be Proc
+    end
+  
     it "sets types" do
       types = [:foo, :bar]
       object = new_object types: types
@@ -40,6 +56,21 @@ describe IF::Object do
   end
   
   context "when created with block" do
+    it "sets initial text" do
+      object = new_object do
+        initial "fizzbuzz"
+      end
+      object.initial.should eq "fizzbuzz"
+    end
+    
+    it "sets initial block" do
+      object = new_object do
+        initial do
+        end
+      end
+      object.initial.class.should be Proc
+    end
+  
     it "can set types" do
       object = new_object do
         is :foo, :bar

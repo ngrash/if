@@ -27,7 +27,7 @@ describe IF::REPL do
     repl.story.get_room(:room).name.should eq "Room"
   end
   
-  it "call step when run until :quit thrown" do
+  it "calls step when run until :quit thrown" do
       repl = IF::REPL.new
       repl.should_receive(:step).exactly(10).times
       repl.should_receive(:step) { throw :quit }
@@ -47,43 +47,7 @@ describe IF::REPL do
       output.gets.chomp.should eq "hai 2 u"
     end
   end
-  
-  it "writes initial text" do
-    output = StringIO.new
-    input = StringIO.new("\n")
-    repl = IF::REPL.new input: input, output: output do
-      story { start :room }
-      
-      room :room, "Room" do
-        initial "fizzbuzz"
-      end
-    end
-    
-    repl.step
-    
-    output.rewind
-    output.readlines.should include "fizzbuzz\n"
-  end
-  
-  it "executes initial block" do
-    output = StringIO.new
-    input = StringIO.new("\n")
-    repl = IF::REPL.new input: input, output: output do
-      story { start :room }
-      
-      room :room, "Room" do
-        initial do
-          write "fizzbuzz"
-        end
-      end
-    end
-    
-    repl.step
-    
-    output.rewind
-    output.readlines.should include "fizzbuzz\n"
-  end
-  
+
   it "writes initial text of all visible objects" do
     output = StringIO.new
     input = StringIO.new("\n")
@@ -91,8 +55,6 @@ describe IF::REPL do
       story { start :room }
       
       room :room, "Room" do
-        initial "init room"
-      
         object :obj1, "Object 1" do
           initial "init obj 1"
         
@@ -119,7 +81,7 @@ describe IF::REPL do
     
     repl.step
     
-    ["init room", "init obj 1", "init obj 1.1", "init obj 1.2", "init obj 2"].each do |initial|
+    ["init obj 1", "init obj 1.1", "init obj 1.2", "init obj 2"].each do |initial|
       output.rewind
       output.readlines.should include "#{initial}\n"
     end
@@ -132,10 +94,6 @@ describe IF::REPL do
       story { start :room }
       
       room :room, "Room" do
-        initial do
-          write "init room"
-        end
-        
         object :obj1, "Object 1" do
           initial do
             write "init obj 1"
@@ -146,11 +104,8 @@ describe IF::REPL do
     
     repl.step
     
-    ["init room", "init obj 1"].each do |initial|
-      output.rewind
-      text = "#{initial}\n"
-      output.readlines.should include text
-    end
+    output.rewind
+    output.readlines.should include "init obj 1\n"
   end
   
   it "writes room description" do

@@ -14,7 +14,6 @@ module IF
       move_to config[:parent]
       
       @description = config[:description]
-      @initial = config[:initial]
       
       names *config[:names] if config[:names]
       
@@ -43,11 +42,6 @@ module IF
       names.each do |name|
         @names << name unless @names.include? name
       end
-    end
-    
-    def initial(initial=nil, &block)
-      return @initial unless initial || block
-      @initial = initial || block
     end
     
     def objects(recursive=false)
