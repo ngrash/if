@@ -32,12 +32,12 @@ describe IF::ObjectContext do
       money_context.moved?.should be_true
     end
     
-    it "returns false when entity not moved" do
+    it "returns false when object not moved" do
       money = object_context :money
       money.moved?.should be_false
     end
     
-    it "returns true when entity moved" do
+    it "returns true when object moved" do
       money = object_context :money
       money.move_to :hall
       money.moved?.should be_true
