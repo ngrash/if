@@ -3,6 +3,7 @@ require "if/context"
 module IF
   class ObjectContext < EntityContext
     def initialize(story, object)
+      @original_location = object.parent
       super(story, object)
     end
   
@@ -21,6 +22,10 @@ module IF
         end until parent.is_a? IF::Room
         @_story.get_context(parent) if parent
       end
+    end
+    
+    def moved?
+      @_entity.parent != @original_location
     end
     
     def move_to(id_or_context)

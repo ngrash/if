@@ -23,6 +23,19 @@ describe IF::ObjectContext do
     end
   end
   
+    describe "#moved?" do
+    it "returns false when entity not moved" do
+      money = object_context :money
+      money.moved?.should be_false
+    end
+    
+    it "returns true when entity moved" do
+      money = object_context :money
+      money.move_to :hall
+      money.moved?.should be_true
+    end
+  end
+  
   it "can get room context" do
     carpet = object_context :carpet
     hall = room_context :hall
