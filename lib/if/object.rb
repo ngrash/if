@@ -13,6 +13,8 @@ module IF
       
       super
       
+      @original_parent = parent
+      
       is *config[:types] if config[:types]
       actions &config[:actions] if config[:actions]
     end
@@ -31,6 +33,10 @@ module IF
       type_ids.each do |type|
         @types << type unless @types.include? type
       end
+    end
+    
+    def moved?
+      @original_parent != parent
     end
     
     def is?(type_id)

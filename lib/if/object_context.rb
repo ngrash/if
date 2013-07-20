@@ -25,7 +25,7 @@ module IF
     end
     
     def moved?
-      @_entity.parent != @original_location
+      @_entity.moved?
     end
     
     def move_to(id_or_context)

@@ -16,6 +16,22 @@ describe IF::Object do
     object.is?(:bar).should be_true
   end
   
+  describe "#moved?" do
+    it "returns true when object was moved" do
+      first_parent = new_object
+      second_parent = new_object
+      child = new_object parent: first_parent
+      child.move_to second_parent
+      child.should be_moved
+    end
+    
+    it "returns false when object was not moved" do
+      parent = new_object
+      child = new_object parent: parent
+      child.should_not be_moved
+    end
+  end
+  
   context "when creating" do
     it "requires two arguments" do
       expect { IF::Object.new }.to raise_error ArgumentError, /0 for 2/

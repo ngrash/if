@@ -23,7 +23,15 @@ describe IF::ObjectContext do
     end
   end
   
-    describe "#moved?" do
+  describe "#moved?" do
+    it "works when object was moved before context was created" do
+      money = @story.get_object :money
+      hall = @story.get_room :hall
+      money.move_to hall
+      money_context = object_context :money
+      money_context.moved?.should be_true
+    end
+    
     it "returns false when entity not moved" do
       money = object_context :money
       money.moved?.should be_false
