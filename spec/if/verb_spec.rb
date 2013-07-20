@@ -1,5 +1,13 @@
 require "spec_helper"
 
+def validate_match(match, options={})
+  match.should be
+  match.verb.should eq options[:verb] if options[:verb]
+  match.proc.should be if options[:arity]
+  match.proc.arity.should eq options[:arity]
+  match.args.should eq options[:args] || []
+end
+
 describe IF::Verb do
   it "handles closure" do
     v1 = nil
@@ -33,11 +41,7 @@ describe IF::Verb do
     matcher = verb.get_matcher objects: [object]
  
     match = matcher.match "take thing"
-    match.should be
-    match.verb.should eq "take"
-    match.proc.should be
-    match.proc.arity.should eq 1
-    match.args.should eq [object]
+    validate_match match, verb: "take", arity: 1, args: [object]
   end
   
   it "can match two objects" do
@@ -51,12 +55,7 @@ describe IF::Verb do
     
     matcher = verb.get_matcher objects: [object1, object2]
     match = matcher.match "connect obj1 and obj2"
-    
-    match.should be
-    match.verb.should eq "connect"
-    match.proc.should be
-    match.proc.arity.should eq 2
-    match.args.should eq [object1, object2]
+    validate_match match, verb: "connect", arity: 2, args: [object1, object2]
   end
   
   it "can match rooms" do
@@ -69,11 +68,7 @@ describe IF::Verb do
     
     matcher = verb.get_matcher rooms: [room]
     match = matcher.match "go to place"
-    match.should be
-    match.verb.should eq "go"
-    match.proc.should be
-    match.proc.arity.should eq 1
-    match.args.should eq [room]
+    validate_match match, verb: "go", arity: 1, args: [room]
   end
   
   it "can match any type" do
@@ -88,11 +83,7 @@ describe IF::Verb do
     
     matcher = verb.get_matcher objects: [box]
     match = matcher.match "open box"
-    match.should be
-    match.verb.should eq "open"
-    match.proc.should be
-    match.proc.arity.should eq 1
-    match.args.should eq [box]
+    validate_match match, verb: "open", arity: 1, args: [box]
   end
   
   it "only matches objects of specified type" do
@@ -114,18 +105,10 @@ describe IF::Verb do
     matcher = verb.get_matcher objects: [box, chest, spoon]
     
     match1 = matcher.match "open box"
-    match1.should be
-    match1.verb.should eq "open"
-    match1.proc.should be
-    match1.proc.arity.should eq 1
-    match1.args.should eq [box]
+    validate_match match1, verb: "open", arity: 1, args: [box]
     
     match2 = matcher.match "open chest"
-    match2.should be
-    match2.verb.should eq "open"
-    match2.proc.should be
-    match2.proc.arity.should eq 1
-    match2.args.should eq [chest]
+    validate_match match2, verb: "open", arity: 1, args: [chest]
     
     match3 = matcher.match "open spoon"
     match3.should be_nil
@@ -148,10 +131,7 @@ describe IF::Verb do
     
     matcher = verb.get_matcher
     match = matcher.match "foo"
-    match.should be
-    match.verb.should eq "foo"
-    match.proc.should be proc
-    match.args.should be_empty
+    validate_match match, verb: "foo", arity: 0
   end
   
   it "matches all entity names" do
@@ -165,18 +145,10 @@ describe IF::Verb do
     matcher = verb.get_matcher objects: [object]
     
     match1 = matcher.match "foo bar"
-    match1.should be
-    match1.verb.should eq "foo"
-    match1.proc.should be
-    match1.proc.arity.should eq 1
-    match1.args.should eq [object]
+    validate_match match1, verb: "foo", arity: 1, args: [object]
     
     match2 = matcher.match "foo baz"
-    match2.should be
-    match2.verb.should eq "foo"
-    match2.proc.should be
-    match2.proc.arity.should eq 1
-    match2.args.should eq [object]
+    validate_match match2, verb: "foo", arity: 1, args: [object]
   end
 
   it "matches all verb names" do
@@ -190,18 +162,10 @@ describe IF::Verb do
     matcher = verb.get_matcher objects: [object]
     
     match1 = matcher.match "foo baz"
-    match1.should be
-    match1.verb.should eq "foo"
-    match1.proc.should be
-    match1.proc.arity.should eq 1
-    match1.args.should eq [object]
+    validate_match match1, verb: "foo", arity: 1, args: [object]
     
     match2 = matcher.match "bar baz"
-    match2.should be
-    match2.verb.should eq "bar"
-    match2.proc.should be
-    match2.proc.arity.should eq 1
-    match2.args.should eq [object]
+    validate_match match2, verb: "bar", arity: 1, args: [object]
   end
   
   it "match is nil when not matched" do
