@@ -25,21 +25,26 @@ module IF
       @story.write text
     end
     
+    def write_room(room_context)
+      write room_context.description
+        
+      room_context.objects.each do |object_context|
+        next if object_context.moved?
+      
+        object = @story.get_object(object_context.id)
+        case object.initial
+        when String
+          write object.initial
+        when Proc
+          object_context.instance_eval &object.initial
+        end
+      end
+    end
+    
     def step
       player_context = @story.get_context(@story.player)
-      
       if player_context && player_context.room
-        write player_context.room.description
-        
-        player_context.room.objects.each do |object_context|
-          object = @story.get_object(object_context.id)
-          case object.initial
-          when String
-            write object.initial
-          when Proc
-            object_context.instance_eval &object.initial
-          end
-        end
+        write_room(player_context.room)
       end
       
       print "> "

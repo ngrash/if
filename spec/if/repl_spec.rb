@@ -47,82 +47,141 @@ describe IF::REPL do
       output.gets.chomp.should eq "hai 2 u"
     end
   end
-
-  it "writes initial text of all visible objects" do
-    output = StringIO.new
-    input = StringIO.new("\n")
-    repl = IF::REPL.new input: input, output: output do
-      story { start :room }
-      
-      room :room, "Room" do
-        object :obj1, "Object 1" do
-          initial "init obj 1"
+  
+  describe "#write_room" do
+    it "does not write initial text of moved, visible object" do
+      output = StringIO.new
+      input = StringIO.new("\n")
+      repl = IF::REPL.new input: input, output: output do
+        story { start :room }
         
-          actions do
-            def objects
-              child_objects
+        room :room, "Room" do
+          object :obj1, "Object 1" do
+            initial "init obj 1"
+          
+            object :obj1_1, "Object 1.1" do
+              initial "init obj 1.1"
+            end
+            
+            object :obj1_2, "Object 1.2" do
+              initial "init obj 1.2"
+            end
+            
+            actions do
+              def objects
+                child_objects
+              end
             end
           end
           
-          object :obj1_1, "Object 1.1" do
-            initial "init obj 1.1"
+          object :obj2, "Object 2" do
+            initial "init obj 2"
+          
+            object :obj2_1, "Object 2.1" do
+              initial "init obj 2.1"
+            end
+            
+            actions do
+              def objects
+                child_objects
+              end
+            end
+          end
+        end
+      end
+      
+      obj1_1 = repl.story.get_object :obj1_1
+      obj2 = repl.story.get_object :obj2
+      obj1_1.move_to obj2
+      
+      repl.step
+      
+      ["init obj 1", "init obj 1.2", "init obj 2", "init obj 2.1"].each do |initial|
+        output.rewind
+        text = "#{initial}\n"
+        output.readlines.should include text 
+      end
+      
+      output.rewind
+      output.readlines.should_not include "init obj 1.1\n"
+    end
+  
+    it "writes initial text of all visible objects" do
+      output = StringIO.new
+      input = StringIO.new("\n")
+      repl = IF::REPL.new input: input, output: output do
+        story { start :room }
+        
+        room :room, "Room" do
+          object :obj1, "Object 1" do
+            initial "init obj 1"
+          
+            actions do
+              def objects
+                child_objects
+              end
+            end
+            
+            object :obj1_1, "Object 1.1" do
+              initial "init obj 1.1"
+            end
+            
+            object :obj1_2, "Object 1.2" do
+              initial "init obj 1.2"
+            end
           end
           
-          object :obj1_2, "Object 1.2" do
-            initial "init obj 1.2"
+          object :obj2, "Object 2" do
+            initial "init obj 2"
           end
         end
+      end
+      
+      repl.step
+      
+      ["init obj 1", "init obj 1.1", "init obj 1.2", "init obj 2"].each do |initial|
+        output.rewind
+        output.readlines.should include "#{initial}\n"
+      end
+    end
+    
+    it "executes initial block of all visible objects" do
+      output = StringIO.new
+      input = StringIO.new("\n")
+      repl = IF::REPL.new input: input, output: output do
+        story { start :room }
         
-        object :obj2, "Object 2" do
-          initial "init obj 2"
-        end
-      end
-    end
-    
-    repl.step
-    
-    ["init obj 1", "init obj 1.1", "init obj 1.2", "init obj 2"].each do |initial|
-      output.rewind
-      output.readlines.should include "#{initial}\n"
-    end
-  end
-  
-  it "executes initial block of all visible objects" do
-    output = StringIO.new
-    input = StringIO.new("\n")
-    repl = IF::REPL.new input: input, output: output do
-      story { start :room }
-      
-      room :room, "Room" do
-        object :obj1, "Object 1" do
-          initial do
-            write "init obj 1"
+        room :room, "Room" do
+          object :obj1, "Object 1" do
+            initial do
+              write "init obj 1"
+            end
           end
         end
       end
-    end
-    
-    repl.step
-    
-    output.rewind
-    output.readlines.should include "init obj 1\n"
-  end
-  
-  it "writes room description" do
-    output = StringIO.new
-    input = StringIO.new("\n")
-    repl = IF::REPL.new input: input, output: output do
-      story { start :room }
       
-      room :room, "Room" do
-        description "fizzbuzz"
-      end
+      repl.step
+      
+      output.rewind
+      output.readlines.should include "init obj 1\n"
     end
     
-    repl.step
-    
-    output.rewind
-    output.readlines.should include "fizzbuzz\n"
+    it "writes room description" do
+      output = StringIO.new
+      input = StringIO.new("\n")
+      repl = IF::REPL.new input: input, output: output do
+        story { start :room }
+        
+        room :room, "Room" do
+          description "fizzbuzz"
+        end
+      end
+      
+      repl.step
+      
+      output.rewind
+      output.readlines.should include "fizzbuzz\n"
+    end
   end
   
   context "when parsing verbs" do
