@@ -31,7 +31,7 @@ module IF
       room_context.objects.each do |object_context|
         next if object_context.moved?
       
-        object = @story.get_object(object_context.id)
+        object = object_context._entity
         case object.initial
         when String
           write object.initial
