@@ -48,6 +48,14 @@ describe IF::REPL do
     end
   end
   
+  describe "#read" do
+    it "reads from input" do
+      input = StringIO.new "fizzbuzz\n"
+      repl = IF::REPL.new input: input
+      repl.read.should eq "fizzbuzz"
+    end
+  end
+  
   describe "#write_room" do
     it "does not write initial text of moved, visible object" do
       output = StringIO.new

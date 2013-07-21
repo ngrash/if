@@ -41,14 +41,18 @@ module IF
       end
     end
     
+    def read
+      print "> "
+      input = @input.gets.chop
+    end
+    
     def step
       player_context = @story.get_context(@story.player)
       if player_context && player_context.room
         write_room(player_context.room)
       end
       
-      print "> "
-      input = @input.gets.chop
+      input = read
       
       matchers = @story.verbs.map do |v|
         v.get_matcher objects: @story.objects
