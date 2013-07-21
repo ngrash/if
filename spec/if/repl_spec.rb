@@ -51,10 +51,7 @@ describe IF::REPL do
   describe "#write_room" do
     it "does not write initial text of moved, visible object" do
       output = StringIO.new
-      input = StringIO.new("\n")
-      repl = IF::REPL.new input: input, output: output do
-        story { start :room }
-        
+      repl = IF::REPL.new output: output do
         room :room, "Room" do
           object :obj1, "Object 1" do
             initial "init obj 1"
@@ -94,7 +91,7 @@ describe IF::REPL do
       obj2 = repl.story.get_object :obj2
       obj1_1.move_to obj2
       
-      repl.step
+      repl.write_room repl.story.get_context :room
       
       ["init obj 1", "init obj 1.2", "init obj 2", "init obj 2.1"].each do |initial|
         output.rewind
@@ -108,10 +105,7 @@ describe IF::REPL do
   
     it "writes initial text of all visible objects" do
       output = StringIO.new
-      input = StringIO.new("\n")
-      repl = IF::REPL.new input: input, output: output do
-        story { start :room }
-        
+      repl = IF::REPL.new output: output do
         room :room, "Room" do
           object :obj1, "Object 1" do
             initial "init obj 1"
@@ -137,7 +131,7 @@ describe IF::REPL do
         end
       end
       
-      repl.step
+      repl.write_room repl.story.get_context :room
       
       ["init obj 1", "init obj 1.1", "init obj 1.2", "init obj 2"].each do |initial|
         output.rewind
@@ -147,10 +141,7 @@ describe IF::REPL do
     
     it "executes initial block of all visible objects" do
       output = StringIO.new
-      input = StringIO.new("\n")
-      repl = IF::REPL.new input: input, output: output do
-        story { start :room }
-        
+      repl = IF::REPL.new output: output do
         room :room, "Room" do
           object :obj1, "Object 1" do
             initial do
@@ -160,7 +151,7 @@ describe IF::REPL do
         end
       end
       
-      repl.step
+      repl.write_room repl.story.get_context :room
       
       output.rewind
       output.readlines.should include "init obj 1\n"
@@ -168,16 +159,13 @@ describe IF::REPL do
     
     it "writes room description" do
       output = StringIO.new
-      input = StringIO.new("\n")
-      repl = IF::REPL.new input: input, output: output do
-        story { start :room }
-        
+      repl = IF::REPL.new output: output do
         room :room, "Room" do
           description "fizzbuzz"
         end
       end
       
-      repl.step
+      repl.write_room repl.story.get_context :room
       
       output.rewind
       output.readlines.should include "fizzbuzz\n"

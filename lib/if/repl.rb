@@ -54,13 +54,10 @@ module IF
         v.get_matcher objects: @story.objects
       end
       
-      matcher = matchers.find do |m|
-        m.match input
-      end
+      match = nil
+      matchers.find { |m| match = m.match input }
       
-      if matcher
-        match = matcher.match input
-      
+      if match
         context = IF::Context.new(@story, nil)
         context.instance_exec(*match.args, &match.proc)
       else
