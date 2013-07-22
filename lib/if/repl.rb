@@ -48,8 +48,9 @@ module IF
     
     def step
       player_context = @story.get_context(@story.player)
-      if player_context && player_context.room
+      if player_context && player_context.room && player_context.room != @last_room
         write_room(player_context.room)
+        @last_room = player_context.room
       end
       
       input = read
