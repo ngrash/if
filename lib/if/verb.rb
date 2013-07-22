@@ -33,7 +33,7 @@ module IF
         @config = config
         
         verb.patterns.each do |pattern,block|
-          re = "(#{verb.names.join("|")})"
+          re = "^(#{verb.names.join("|")})"
           pattern.each do |part|
             re << " "
             if part == :object
@@ -47,7 +47,8 @@ module IF
             else
               fail
             end
-          end          
+          end
+          re << "$"
           @expressions[Regexp.new(re)] = block
         end
       end
@@ -65,6 +66,10 @@ module IF
       
       def lookup_object(name)
         (@config[:objects] || [] + @config[:rooms] || []).find { |object| object.names.include? name }
+      end
+      
+      def inspect
+        "<#Matcher @expressions: #{@expressions.keys.inspect}>"
       end
     
       class Match

@@ -30,6 +30,21 @@ describe IF::Verb do
     end
   end
   
+  it "finds complete match" do
+    verb = IF::Verb.new "open" do
+      alone do
+      end
+    
+      with :object do |obj|
+      end
+    end
+    
+    object = IF::Object.new(:thing, "box")
+    matcher = verb.get_matcher objects: [object]
+    match = matcher.match "open box"
+    validate_match match, verb: "open", arity: 1, args: [object]
+  end
+  
   it "can match object" do
     verb = IF::Verb.new "take" do
       with :object do |obj|
