@@ -45,6 +45,29 @@ describe IF::Verb do
     validate_match match, verb: "open", arity: 1, args: [object]
   end
   
+  it "ignores verb case" do
+    verb = IF::Verb.new "foo" do
+      alone do
+      end
+    end
+    
+    matcher = verb.get_matcher
+    match = matcher.match "FoO"
+    validate_match match, verb: "foo", arity: 0
+  end
+  
+  it "ignores object case" do
+    verb = IF::Verb.new "foo" do
+      with :object do |o|
+      end
+    end
+    
+    object = IF::Object.new(:stuff, "Stuff")
+    matcher = verb.get_matcher objects: [object]
+    match = matcher.match "foo stuff"
+    validate_match match, verb: "foo", arity: 1, args: [object]
+  end
+  
   it "can match object" do
     verb = IF::Verb.new "take" do
       with :object do |obj|

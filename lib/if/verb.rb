@@ -49,7 +49,7 @@ module IF
             end
           end
           re << "$"
-          @expressions[Regexp.new(re)] = block
+          @expressions[Regexp.new(re, Regexp::IGNORECASE)] = block
         end
       end
     
@@ -65,7 +65,9 @@ module IF
       end
       
       def lookup_object(name)
-        (@config[:objects] || [] + @config[:rooms] || []).find { |object| object.names.include? name }
+        (@config[:objects] || [] + @config[:rooms] || []).find do |object| 
+          object.names.map { |n| n.downcase }.include? name.downcase
+        end
       end
       
       def inspect
@@ -76,7 +78,7 @@ module IF
         attr_reader :verb, :proc, :args
         
         def initialize(verb, proc, args)
-          @verb = verb
+          @verb = verb.downcase
           @proc = proc
           @args = args
         end
